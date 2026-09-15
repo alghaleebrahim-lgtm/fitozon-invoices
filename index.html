@@ -139,7 +139,7 @@ table.tbl{width:100%;border-collapse:collapse;min-width:720px}
 .co-mini{display:flex;gap:12px;align-items:center}
 .co-mini img{width:48px;height:48px;border-radius:10px}
 .co-mini a{color:var(--k);cursor:pointer;text-decoration:underline;text-decoration-color:var(--y);text-decoration-thickness:2px;font-size:12px}
-.item{display:grid;grid-template-columns:26px repeat(3,minmax(0,1fr)) 34px;grid-template-areas:"no name name desc desc" "no qty price total del";gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#FCFCFA;animation:enter .2s ease-out}
+.item{display:grid;grid-template-columns:26px repeat(3,minmax(0,1fr)) 34px;grid-template-areas:"no name name name del" "no qty price total total";gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#FCFCFA;animation:enter .2s ease-out}
 .item .no{grid-area:no;width:24px;height:24px;border-radius:6px;background:var(--k);color:var(--y);display:grid;place-items:center;font-size:12px;font-weight:700}
 .a-name{grid-area:name}.a-desc{grid-area:desc}.a-qty{grid-area:qty}.a-price{grid-area:price}.a-total{grid-area:total}.a-del{grid-area:del;align-self:end;margin-bottom:2px}
 .mini{display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -216,7 +216,7 @@ table.tbl{width:100%;border-collapse:collapse;min-width:720px}
   .hero .ring{inset-inline-end:-60px}
   .stat .v{font-size:19px}
   .head-actions{width:100%}.head-actions .btn{flex:1}
-  .item{grid-template-columns:24px repeat(3,minmax(0,1fr)) 34px;grid-template-areas:"no name name name name" "no desc desc desc desc" "no qty price total del"}
+  .item{grid-template-columns:24px repeat(3,minmax(0,1fr)) 34px;grid-template-areas:"no name name name del" "no qty price total total"}
   .toolbar .btn{flex:1 1 40%}
 }
 
@@ -262,11 +262,35 @@ table.tbl{width:100%;border-collapse:collapse;min-width:720px}
 .inv-grand{margin-top:10px;background:#000;color:#fff;border-radius:12px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
 .inv-grand b{color:#FFD600;font-size:20px}
 .inv-grand small{color:#FFD600;font-size:11px;font-weight:600}
-.inv-sign{display:flex;gap:30px;padding:18px 44px 22px;margin-top:auto}
-.inv-sig{flex:1;text-align:center}
-.inv-sig .img{height:112px;display:flex;align-items:center;justify-content:center}
-.inv-sig img{max-height:112px;max-width:230px}
-.inv-sig .ln{border-top:1.5px solid #111;margin:6px 50px 6px}
+.inv-sign{display:flex;gap:24px;padding:16px 44px 24px;margin-top:auto}
+.inv-sig{flex:1;text-align:center;border:1.5px solid #000;border-radius:14px;padding:12px 14px 10px}
+.inv-sig .img{height:140px;display:flex;align-items:center;justify-content:center}
+.inv-sig img{max-height:140px;max-width:250px}
+.inv-sig .ph{color:#B0B0B0;font-size:11px}
+.inv-sig .ln{border-top:1.5px dashed #999;margin:6px 20px 8px}
+.inv-sig b{font-size:13px}
+.inv-title .inv-word{font-size:28px}
+.inv-paid{display:inline-block;margin-top:8px;margin-inline-start:6px;padding:4px 12px;border-radius:8px;font-weight:700;font-size:12px}
+.inv-price{border:1px solid #E8E8E8;border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.inv-price h4{margin:0 0 8px;font-size:12px}
+.chk-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.chk{display:flex;align-items:center;gap:7px;font-weight:600}
+.chk .box{width:16px;height:16px;border:1.5px solid #000;border-radius:4px;display:flex;align-items:center;justify-content:center;flex:none;background:#fff}
+.chk .box i{display:block;width:8px;height:8px;border-radius:2px;background:#000}
+.chk.on .box{background:#FFD600}
+.chk.sub{font-weight:500}
+.chk.off{color:#B5B5B5}
+.chk.off .box{border-color:#CFCFCF}
+.chk-sep{width:1px;height:16px;background:#DDD}
+.inv-terms{font-size:11px;color:#444;line-height:1.8;background:#FAFAF5;border-inline-start:3px solid #FFD600;padding:8px 12px;border-radius:6px}
+/* editor price status */
+.ps-opts{display:flex;gap:8px;flex-wrap:wrap}
+.ps-opt{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:600;background:#FAFAF8;user-select:none}
+.ps-opt input{width:auto;accent-color:#000;margin:0}
+.ps-opt:has(input:checked){border-color:#000;background:var(--y2)}
+.ps-sub{display:flex;gap:8px;margin-top:10px;padding-inline-start:18px;flex-wrap:wrap}
+.ps-sub .ps-opt{font-weight:500}
+.ps-sub.disabled .ps-opt{opacity:.45;cursor:not-allowed}
 .inv-foot{background:#FFD600;padding:12px 44px;display:flex;justify-content:space-between;gap:16px;font-size:11px;font-weight:600;color:#000}
 
 @media print{
@@ -313,7 +337,7 @@ st_unpaid:'غير مدفوعة',st_partial:'مدفوعة جزئياً',st_paid:'
 secItems:'المنتجات / الخدمات',item:'البيان',itemPh:'اسم المنتج أو الخدمة',desc:'الوصف',qty:'الكمية',unitPrice:'سعر الوحدة',lineTotal:'الإجمالي',addItem:'إضافة منتج',
 secFees:'الرسوم والتكاليف',subtotal:'إجمالي المنتجات',shipping:'الشحن',service:'رسوم الخدمة',delivery:'التوصيل',customs:'الجمارك',other:'رسوم أخرى',discount:'الخصم',grandTotal:'الإجمالي النهائي',paid:'المدفوع',remaining:'المتبقي',
 secNotes:'الملاحظات والشروط',notes:'ملاحظات الفاتورة',terms:'الشروط والأحكام',
-invoiceWord:'فاتورة',billTo:'فاتورة إلى',invDetails:'تفاصيل الفاتورة',approvedSig:'التوقيع المعتمد',companyStamp:'ختم الشركة',taxNo:'الرقم الضريبي',noItems:'لم تتم إضافة منتجات',
+invoiceWord:'فاتورة تأكيد الطلب',product:'المنتج',secPrice:'حالة السعر',priceInclusive:'شامل',priceExclusive:'غير شامل',weight:'الوزن',needExcl:'حدد الوزن أو الجمارك عند اختيار غير شامل',extraDiscount:'الخصم (اختياري)',fixedTerms:'في حال كان السعر غير شامل الوزن أو الجمارك، تُحتسب رسوم الوزن بعد استلام الطلب واحتساب وزنه، وتُحتسب الجمارك إن وجدت بعد استلام الشحنة من الجمارك السودانية.',sigPending:'لم يتم رفع التوقيع',stampPending:'لم يتم رفع الختم',secTotals:'الإجمالي',billTo:'فاتورة إلى',invDetails:'تفاصيل الفاتورة',approvedSig:'التوقيع المعتمد',companyStamp:'ختم الشركة',taxNo:'الرقم الضريبي',noItems:'لم تتم إضافة منتجات',
 required:'هذا الحقل مطلوب',noNegative:'القيم السالبة غير مسموحة',dueBefore:'تاريخ الاستحقاق قبل تاريخ الإصدار',badEmail:'صيغة البريد الإلكتروني غير صحيحة',needItem:'أضف منتجاً واحداً على الأقل مع الاسم والكمية',badPaid:'أدخل مبلغاً أكبر من 0 وأقل من الإجمالي',fixErrors:'راجع الحقول المحددة باللون الأحمر',
 saved:'تم حفظ الفاتورة',deleted:'تم حذف الفاتورة',duplicated:'تم نسخ الفاتورة، راجعها ثم احفظها',
 actPreview:'معاينة',actPdf:'تحميل PDF',actPrint:'طباعة',actEdit:'تعديل',actDup:'نسخ الفاتورة',actDelete:'حذف',actShare:'مشاركة',back:'رجوع',
@@ -338,7 +362,7 @@ st_unpaid:'Unpaid',st_partial:'Partially paid',st_paid:'Paid',
 secItems:'Products / services',item:'Item',itemPh:'Product or service name',desc:'Description',qty:'Qty',unitPrice:'Unit price',lineTotal:'Total',addItem:'Add item',
 secFees:'Fees & charges',subtotal:'Items subtotal',shipping:'Shipping',service:'Service fee',delivery:'Delivery',customs:'Customs',other:'Other fees',discount:'Discount',grandTotal:'Grand total',paid:'Paid',remaining:'Balance due',
 secNotes:'Notes & terms',notes:'Invoice notes',terms:'Terms & conditions',
-invoiceWord:'INVOICE',billTo:'Bill to',invDetails:'Invoice details',approvedSig:'Authorized signature',companyStamp:'Company stamp',taxNo:'Tax No.',noItems:'No items added',
+invoiceWord:'Order Confirmation Invoice',product:'Product',secPrice:'Price status',priceInclusive:'Inclusive',priceExclusive:'Not inclusive',weight:'Weight',needExcl:'Select weight or customs when price is not inclusive',extraDiscount:'Discount (optional)',fixedTerms:'If the price does not include weight or customs, weight charges are calculated after the order is received and weighed, and customs charges, if any, are calculated after the shipment is released by Sudanese Customs.',sigPending:'Signature not uploaded',stampPending:'Stamp not uploaded',secTotals:'Total',billTo:'Bill to',invDetails:'Invoice details',approvedSig:'Authorized signature',companyStamp:'Company stamp',taxNo:'Tax No.',noItems:'No items added',
 required:'This field is required',noNegative:'Negative values are not allowed',dueBefore:'Due date is before issue date',badEmail:'Invalid email format',needItem:'Add at least one item with a name and quantity',badPaid:'Enter an amount above 0 and below the total',fixErrors:'Check the fields marked in red',
 saved:'Invoice saved',deleted:'Invoice deleted',duplicated:'Invoice copied. Review it, then save',
 actPreview:'Preview',actPdf:'Download PDF',actPrint:'Print',actEdit:'Edit',actDup:'Duplicate',actDelete:'Delete',actShare:'Share',back:'Back',
@@ -366,7 +390,7 @@ const DEFAULT_SETTINGS = {
   logo:DEFAULT_LOGO, signature:'', stamp:'',
   currency:'SDG', startNumber:1, dueDays:7,
   footerText:'شكراً لتعاملكم مع فيتوزون', footerTextEn:'Thank you for choosing Fitozon',
-  terms:'الأسعار تشمل الرسوم الموضحة في الفاتورة.\nيتم تنفيذ الطلب بعد تأكيد الدفع.'
+  terms:''
 };
 
 /* ---------------- Supabase config ---------------- */
@@ -442,9 +466,9 @@ function calc(inv){
 const isFilled=it=>String(it.name||'').trim()||String(it.desc||'').trim()||num(it.price)>0;
 async function newDraft(){
   const st=S.settings;
-  return {id:null,number:await Repo.nextNumber(true),issueDate:todayISO(),dueDate:todayISO(+st.dueDays||0),currency:st.currency,status:'unpaid',paidAmount:'',
+  return {id:null,number:await Repo.nextNumber(true),issueDate:todayISO(),dueDate:todayISO(+st.dueDays||0),currency:st.currency,status:'paid',paidAmount:'',priceStatus:'inclusive',exclWeight:false,exclCustoms:false,
     client:{name:'',phone:'',email:'',address:'',city:''},items:[{name:'',desc:'',qty:1,price:''}],
-    fees:{shipping:'',service:'',delivery:'',customs:'',other:'',discount:''},notes:'',terms:st.terms||'',createdAt:null,updatedAt:null};
+    fees:{shipping:'',service:'',delivery:'',customs:'',other:'',discount:''},notes:'',terms:'',createdAt:null,updatedAt:null};
 }
 
 /* ---------------- Invoice template ---------------- */
@@ -454,11 +478,16 @@ function renderInvoice(inv,st,lang){
   const coAlt=lang==='ar'?st.companyNameEn:st.companyName;
   const contact=[st.address&&`<span dir="auto">${esc(st.address)}</span>`, st.phone&&`${L.phone}: <bdi dir="ltr">${esc(st.phone)}</bdi>`, st.email&&`<bdi dir="ltr">${esc(st.email)}</bdi>`, st.website&&`<bdi dir="ltr">${esc(st.website)}</bdi>`].filter(Boolean);
   const items=inv.items.filter(isFilled);
-  const rows=items.length?items.map((it,i)=>`<tr class="${i%2?'alt':''}"><td class="c idx">${i+1}</td><td><b dir="auto">${esc(it.name)||'—'}</b></td><td class="dsc"><span dir="auto">${esc(it.desc)}</span></td><td class="c">${QF.format(num(it.qty))}</td><td class="c">${fmt(num(it.price))}</td><td class="c"><b>${fmt(r2(num(it.qty)*num(it.price)))}</b></td></tr>`).join('')
-    :`<tr><td colspan="6" class="c" style="color:#999;padding:22px">${L.noItems}</td></tr>`;
-  const fr=(k,v,neg)=>v>0?`<div class="tr"><span>${L[k]}</span><b><bdi dir="ltr">${neg?'-':''}${fmt(v)}</bdi></b></div>`:'';
-  const f=inv.fees;
+  const rows=items.length?items.map((it,i)=>`<tr class="${i%2?'alt':''}"><td class="c idx">${i+1}</td><td><b dir="auto">${esc(it.name)||'—'}</b></td><td class="c">${QF.format(num(it.qty))}</td><td class="c"><b>${fmt(r2(num(it.qty)*num(it.price)))}</b></td></tr>`).join('')
+    :`<tr><td colspan="4" class="c" style="color:#999;padding:22px">${L.noItems}</td></tr>`;
   const footText=lang==='ar'?st.footerText:(st.footerTextEn||st.footerText);
+  const excl=inv.priceStatus==='exclusive';
+  const box=(label,on,cls='')=>`<span class="chk ${on?'on':''} ${cls}"><span class="box">${on?'<i></i>':''}</span><span>${label}</span></span>`;
+  const priceBlock=inv.priceStatus?`<div class="inv-price"><h4>${L.secPrice}</h4><div class="chk-row">
+      ${box(L.priceInclusive,!excl)}${box(L.priceExclusive,excl)}<span class="chk-sep"></span>
+      ${box(L.weight,excl&&inv.exclWeight,'sub '+(excl?'':'off'))}${box(L.customs,excl&&inv.exclCustoms,'sub '+(excl?'':'off'))}
+    </div></div>`:'';
+  const sigBox=(img,label,ph)=>`<div class="inv-sig"><div class="img">${img?`<img src="${img}" alt="">`:`<span class="ph">${ph}</span>`}</div><div class="ln"></div><b>${label}</b></div>`;
   return `<div class="inv" dir="${dir}" lang="${lang}">
   <div class="inv-top">
     <div class="inv-brand">
@@ -477,28 +506,28 @@ function renderInvoice(inv,st,lang){
       ${(inv.client.address||inv.client.city)?`<div style="color:#555" dir="auto">${[inv.client.address,inv.client.city].filter(Boolean).map(esc).join('، ')}</div>`:''}
     </div>
     <div class="inv-box"><h4>${L.invDetails}</h4>
-      <div class="inv-kv"><span>${L.issueDate}</span><b>${fmtDate(inv.issueDate)}</b></div>
-      <div class="inv-kv"><span>${L.dueDate}</span><b>${fmtDate(inv.dueDate)}</b></div>
+      <div class="inv-kv"><span>${L.invNo}</span><b><bdi dir="ltr">${esc(inv.number)}</bdi></b></div>
+      <div class="inv-kv"><span>${L.colDate}</span><b>${fmtDate(inv.issueDate)}</b></div>
       <div class="inv-kv"><span>${L.currency}</span><b>${lang==='ar'?CUR[inv.currency]?.nameAr:CUR[inv.currency]?.nameEn}</b></div>
       <div class="inv-kv"><span>${L.status}</span><b><span class="badge b-${inv.status}">${L['st_'+inv.status]}</span></b></div>
     </div>
   </div>
-  <div class="inv-items"><table class="inv-table"><thead><tr><th class="c">#</th><th>${L.item}</th><th>${L.desc}</th><th class="c">${L.qty}</th><th class="c">${L.unitPrice}</th><th class="c">${L.lineTotal}</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="inv-items"><table class="inv-table"><thead><tr><th class="c">#</th><th>${L.product}</th><th class="c">${L.qty}</th><th class="c">${L.lineTotal}</th></tr></thead><tbody>${rows}</tbody></table></div>
   <div class="inv-bottom">
     <div class="inv-notes">
+      ${priceBlock}
       ${inv.notes?`<h4>${L.notes}</h4><p dir="auto">${esc(inv.notes)}</p>`:''}
-      ${inv.terms?`<h4>${L.terms}</h4><p dir="auto">${esc(inv.terms)}</p>`:''}
+      <h4>${L.terms}</h4><div class="inv-terms">${L.fixedTerms}</div>
     </div>
     <div class="inv-totals">
-      <div class="tr"><span>${L.subtotal}</span><b><bdi dir="ltr">${fmt(c.sub)}</bdi></b></div>
-      ${fr('shipping',num(f.shipping))}${fr('service',num(f.service))}${fr('delivery',num(f.delivery))}${fr('customs',num(f.customs))}${fr('other',num(f.other))}${fr('discount',c.discount,true)}
+      ${c.discount>0?`<div class="tr"><span>${L.subtotal}</span><b><bdi dir="ltr">${fmt(r2(c.sub+c.fees))}</bdi></b></div><div class="tr"><span>${L.discount}</span><b><bdi dir="ltr">-${fmt(c.discount)}</bdi></b></div>`:''}
       <div class="inv-grand"><span>${L.grandTotal}</span><div style="text-align:end"><b><bdi dir="ltr">${fmt(c.total)}</bdi></b> <small>${cur}</small></div></div>
-      ${inv.status!=='unpaid'?`<div class="tr" style="margin-top:8px"><span>${L.paid}</span><b><bdi dir="ltr">${fmt(c.paid)}</bdi></b></div><div class="tr"><span>${L.remaining}</span><b><bdi dir="ltr">${fmt(c.due)}</bdi></b></div>`:''}
+      ${inv.status==='partial'?`<div class="tr" style="margin-top:8px"><span>${L.paid}</span><b><bdi dir="ltr">${fmt(c.paid)}</bdi></b></div><div class="tr"><span>${L.remaining}</span><b><bdi dir="ltr">${fmt(c.due)}</bdi></b></div>`:''}
     </div>
   </div>
   <div class="inv-sign">
-    <div class="inv-sig"><div class="img">${st.signature?`<img src="${st.signature}" alt="">`:''}</div><div class="ln"></div><b>${L.approvedSig}</b></div>
-    <div class="inv-sig"><div class="img">${st.stamp?`<img src="${st.stamp}" alt="">`:''}</div><div class="ln"></div><b>${L.companyStamp}</b></div>
+    ${sigBox(st.signature,L.approvedSig,L.sigPending)}
+    ${sigBox(st.stamp,L.companyStamp,L.stampPending)}
   </div>
   <div class="inv-foot"><span dir="auto">${esc(footText)}</span><span>${st.taxNumber?`${L.taxNo}: <bdi dir="ltr">${esc(st.taxNumber)}</bdi>`:(st.website?`<bdi dir="ltr">${esc(st.website)}</bdi>`:'')}</span></div>
 </div>`;
@@ -656,7 +685,7 @@ async function viewEditor(app){
       <div class="card"><h3><i class="bar"></i>${t('secInvoice')}</h3><div class="grid">
         <label class="field"><span>${t('invNo')}</span><input value="${esc(d.number)}" readonly dir="ltr"></label>
         ${fld(t('currency'),'currency',{select:curOpts})}
-        ${fld(t('issueDate'),'issueDate',{type:'date',req:1})}${fld(t('dueDate'),'dueDate',{type:'date'})}
+        ${fld(t('issueDate'),'issueDate',{type:'date',req:1})}
         ${fld(t('status'),'status',{select:['unpaid','partial','paid'].map(s=>[s,t('st_'+s)])})}
         ${fld(t('paidAmount'),'paidAmount',{type:'number',id:'paidWrap',hidden:d.status!=='partial'})}
       </div></div>
@@ -664,12 +693,24 @@ async function viewEditor(app){
         <div id="items"></div><small class="err" id="itemsErr"></small>
         <button class="add-item" data-action="add-item">${ic('plus')}${t('addItem')}</button>
       </div>
-      <div class="card"><h3><i class="bar"></i>${t('secFees')}</h3>
-        <div class="grid g3 fees">${['shipping','service','delivery','customs','other','discount'].map(k=>fld(t(k),'fees.'+k,{type:'number'})).join('')}</div>
+      <div class="card"><h3><i class="bar"></i>${t('secPrice')}</h3>
+        <div class="ps-opts">
+          <label class="ps-opt"><input type="radio" name="ps" data-bind="priceStatus" value="inclusive" ${d.priceStatus!=='exclusive'?'checked':''}>${t('priceInclusive')}</label>
+          <label class="ps-opt"><input type="radio" name="ps" data-bind="priceStatus" value="exclusive" ${d.priceStatus==='exclusive'?'checked':''}>${t('priceExclusive')}</label>
+        </div>
+        <div class="ps-sub ${d.priceStatus==='exclusive'?'':'disabled'}" id="psSub">
+          <label class="ps-opt"><input type="checkbox" data-bind="exclWeight" ${d.exclWeight?'checked':''} ${d.priceStatus==='exclusive'?'':'disabled'}>${t('weight')}</label>
+          <label class="ps-opt"><input type="checkbox" data-bind="exclCustoms" ${d.exclCustoms?'checked':''} ${d.priceStatus==='exclusive'?'':'disabled'}>${t('customs')}</label>
+        </div>
+        <small class="err" id="psErr"></small>
+      </div>
+      <div class="card"><h3><i class="bar"></i>${t('secTotals')}</h3>
+        <div class="grid">${fld(t('extraDiscount'),'fees.discount',{type:'number'})}</div>
         <div class="sumbox" id="sumbox"></div>
       </div>
-      <div class="card"><h3><i class="bar"></i>${t('secNotes')}</h3><div class="grid">
-        ${fld(t('notes'),'notes',{textarea:1,full:1})}${fld(t('terms'),'terms',{textarea:1,full:1})}
+      <div class="card"><h3><i class="bar"></i>${t('notes')}</h3><div class="grid">
+        ${fld(t('notes'),'notes',{textarea:1,full:1})}
+        <div class="field full"><span>${t('terms')}</span><div class="banner" style="margin:0">${t('fixedTerms')}</div></div>
       </div></div>
     </div>
     <div class="preview-col"><div class="sticky">
@@ -683,7 +724,6 @@ function renderItems(){
   $('#items').innerHTML=S.draft.items.map((it,i)=>`<div class="item">
     <span class="no">${i+1}</span>
     <label class="mini a-name"><span>${t('item')} <em>*</em></span><input data-item="${i}" data-f="name" value="${esc(it.name)}" placeholder="${t('itemPh')}"></label>
-    <label class="mini a-desc"><span>${t('desc')}</span><input data-item="${i}" data-f="desc" value="${esc(it.desc)}"></label>
     <label class="mini a-qty"><span>${t('qty')}</span><input data-item="${i}" data-f="qty" type="number" min="0" step="any" inputmode="decimal" value="${esc(it.qty)}"></label>
     <label class="mini a-price"><span>${t('unitPrice')}</span><input data-item="${i}" data-f="price" type="number" min="0" step="any" inputmode="decimal" value="${esc(it.price)}" placeholder="0"></label>
     <div class="mini a-total"><span>${t('lineTotal')}</span><div class="line-total" data-line="${i}">${fmt(r2(num(it.qty)*num(it.price)))}</div></div>
@@ -697,7 +737,7 @@ function updatePreview(){
     const s=$('#a4Scale'); if(!s) return;
     s.innerHTML=renderInvoice(S.draft,S.settings,S.lang); fitPreview();
     const c=calc(S.draft), cur=S.draft.currency, sb=$('#sumbox');
-    if(sb) sb.innerHTML=`<div class="r"><span>${t('subtotal')}</span><b>${money(c.sub,cur)}</b></div><div class="r"><span>${t('secFees')}</span><b>${money(c.fees,cur)}</b></div><div class="r"><span>${t('discount')}</span><b><bdi dir="ltr">-${fmt(c.discount)}</bdi></b></div>
+    if(sb) sb.innerHTML=`<div class="r"><span>${t('subtotal')}</span><b>${money(r2(c.sub+c.fees),cur)}</b></div>${c.discount>0?`<div class="r"><span>${t('discount')}</span><b><bdi dir="ltr">-${fmt(c.discount)}</bdi></b></div>`:''}
       <div class="g"><span>${t('grandTotal')}</span><b>${money(c.total,cur)}</b></div>`;
   });
 }
@@ -708,7 +748,8 @@ function validate(){
   $$('.invalid').forEach(x=>x.classList.remove('invalid')); $$('[data-err]').forEach(x=>x.textContent=''); $('#itemsErr').textContent='';
   ['client.name','client.phone','issueDate'].forEach(p=>{if(!String(getPath(d,p)||'').trim()){flagErr(p,t('required'));bad=true}});
   if(d.client.email&&!/^\S+@\S+\.\S+$/.test(d.client.email)){flagErr('client.email',t('badEmail'));bad=true}
-  if(d.dueDate&&d.issueDate&&d.dueDate<d.issueDate){flagErr('dueDate',t('dueBefore'));bad=true}
+  $('#psErr').textContent='';
+  if(d.priceStatus==='exclusive'&&!d.exclWeight&&!d.exclCustoms){$('#psErr').textContent=t('needExcl');bad=true}
   d.items.forEach((it,i)=>{ if(!isFilled(it)) return;
     if(!String(it.name||'').trim()){$(`[data-item="${i}"][data-f="name"]`).classList.add('invalid');bad=true}
     if(!(num(it.qty)>0)){$(`[data-item="${i}"][data-f="qty"]`).classList.add('invalid');bad=true} });
@@ -717,7 +758,7 @@ function validate(){
   if(bad){
     toast(t('fixErrors'),'err');
     if(S.mobileTab==='preview'){S.mobileTab='form';$('.split').dataset.mtab='form';$$('.mtabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab==='form'))}
-    const first=$('.invalid')||$('#itemsErr'); first?.scrollIntoView({behavior:'smooth',block:'center'});
+    const first=$('.invalid')||$('#itemsErr:not(:empty)')||$('#psErr:not(:empty)'); first?.scrollIntoView({behavior:'smooth',block:'center'});
   }
   return !bad;
 }
@@ -785,7 +826,6 @@ async function viewSettings(app){
     ${f('startNumber',t('startNumber'),{type:'number',min:1})}
     <div class="field" style="justify-content:flex-end"><span>${t('nextNo')}</span><div><span class="next-no">${next}</span></div></div>
     ${f('footerText',t('footerText'))}${f('footerTextEn',t('footerTextEn'),{ltr:1})}
-    ${f('terms',t('defTerms'),{textarea:1,full:1})}
   </div></div>
   <div class="row end"><button class="btn yellow lg" data-action="save-settings">${ic('save')}${t('saveSettings')}</button></div>`;
 }
@@ -796,10 +836,13 @@ function onInput(e){
   const el=e.target;
   if(S.view==='editor'){
     if(el.dataset.bind){
-      let v=el.value; const p=el.dataset.bind;
+      let v=el.type==='checkbox'?el.checked:el.value; const p=el.dataset.bind;
       if(el.type==='number'&&parseFloat(v)<0){el.value='';v='';flagErr(p,t('noNegative'))} else clearErr(p);
       setPath(S.draft,p,v);
       if(p==='status'){const w=$('#paidWrap');if(w)w.style.display=v==='partial'?'':'none'}
+      if(p==='priceStatus'){const ex=v==='exclusive';if(!ex){S.draft.exclWeight=false;S.draft.exclCustoms=false}
+        $('#psSub').classList.toggle('disabled',!ex);$$('#psSub input').forEach(c=>{c.disabled=!ex;if(!ex)c.checked=false})}
+      if(p==='priceStatus'||p==='exclWeight'||p==='exclCustoms') $('#psErr').textContent='';
       updatePreview();
     } else if(el.dataset.item!==undefined){
       const i=+el.dataset.item; let v=el.value;
@@ -843,7 +886,7 @@ async function handleClick(e){
     case 'pdf': { const inv=await Repo.getInvoice(id); inv&&downloadPdf(inv); break; }
     case 'print': { const inv=await Repo.getInvoice(id); inv&&printInvoice(inv); break; }
     case 'share': { const inv=await Repo.getInvoice(id); inv&&shareInvoice(inv); break; }
-    case 'edit': { const inv=await Repo.getInvoice(id); if(inv){S.draft=inv;S.editingId=inv.id;S.mobileTab='form';navigate('editor')} break; }
+    case 'edit': { const inv=await Repo.getInvoice(id); if(inv){inv.priceStatus??='inclusive';inv.exclWeight??=false;inv.exclCustoms??=false;S.draft=inv;S.editingId=inv.id;S.mobileTab='form';navigate('editor')} break; }
     case 'dup': { const inv=await Repo.getInvoice(id); if(!inv)break;
       Object.assign(inv,{id:null,number:await Repo.nextNumber(true),issueDate:todayISO(),dueDate:todayISO(+S.settings.dueDays||0),status:'unpaid',paidAmount:'',createdAt:null,updatedAt:null});
       S.draft=inv; S.editingId=null; S.mobileTab='form'; navigate('editor'); toast(t('duplicated')); break; }
