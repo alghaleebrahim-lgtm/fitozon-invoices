@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نظام فواتير أعمال فيتوزون التجارية</title>
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{--y:#FFD600;--y2:#FFF3A8;--k:#000;--bg:#F4F4F2;--line:#E4E4E0;--muted:#6A6A66;--red:#D42F2F;--r:12px}
+html,body{margin:0;background:var(--bg);color:var(--k);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--k);outline-offset:2px}
+.ic{width:18px;height:18px;flex:none}
+[dir=rtl] .flip{transform:scaleX(-1)}
+bdi{unicode-bidi:isolate}
+
+/* Topbar */
+#topbar{position:sticky;top:0;z-index:40;background:var(--k);color:#fff;display:flex;align-items:center;gap:18px;padding:10px 24px;border-bottom:4px solid var(--y)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap}
+.brand img{width:40px;height:40px;border-radius:10px}
+.brand small{display:block;font-weight:400;color:#B8B8B0;font-size:11px;line-height:1.2}
+.nav{display:flex;gap:4px;margin-inline-start:auto;overflow-x:auto;scrollbar-width:none}
+.nav button{background:transparent;border:0;color:#CFCFC8;padding:8px 12px;border-radius:9px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap;transition:background .15s,color .15s}
+.nav button:hover{color:#fff;background:#1A1A1A}
+.nav button.on{background:var(--y);color:var(--k);font-weight:600}
+.lang{border:1px solid #3A3A3A;background:transparent;color:#fff;border-radius:9px;padding:7px 12px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+.lang:hover{border-color:var(--y)}
+
+main{max-width:1440px;margin:0 auto;padding:24px}
+.enter{animation:enter .28s ease-out}
+@keyframes enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+h1{margin:0;font-size:24px;line-height:1.3}
+.muted{color:var(--muted)}
+.sm{font-size:12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.end{justify-content:flex-end}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:#fff;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600;transition:background .15s,border-color .15s,transform .1s;white-space:nowrap;text-decoration:none}
+.btn:hover{border-color:var(--k)}
+.btn:active{transform:scale(.98)}
+.btn.yellow{background:var(--y);border-color:var(--y);color:var(--k)}
+.btn.yellow:hover{border-color:var(--k)}
+.btn.dark{background:var(--k);color:#fff;border-color:var(--k)}
+.btn.dark:hover{background:#222}
+.btn.ghost{background:transparent}
+.btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+.btn.danger-ghost{color:var(--red)}
+.btn.danger-ghost:hover{border-color:var(--red);background:#FFF1F1}
+.btn.sm{padding:6px 10px;font-size:13px}
+.btn.lg{padding:14px 22px;font-size:15px}
+.icon-btn{width:34px;height:34px;display:inline-grid;place-items:center;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .15s,border-color .15s}
+.icon-btn .ic{width:16px;height:16px}
+.icon-btn:hover{background:var(--y);border-color:var(--y)}
+.icon-btn.del:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.back{background:none;border:0;padding:0;margin-bottom:6px;display:flex;align-items:center;gap:4px;color:var(--muted);cursor:pointer}
+.back:hover{color:var(--k)}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.card h3{margin:0 0 14px;font-size:15px;display:flex;align-items:center;gap:10px}
+.card h3 .bar{width:4px;height:16px;background:var(--y);border-radius:2px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-head h3{margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
+.field>span,.mini>span{font-size:12px;color:var(--muted);font-weight:500}
+em{color:var(--red);font-style:normal}
+input,select,textarea{width:100%;border:1px solid var(--line);background:#FAFAF8;border-radius:9px;padding:9px 12px;outline:none;transition:border-color .15s,box-shadow .15s;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--k);background:#fff;box-shadow:0 0 0 3px rgba(255,214,0,.55)}
+input[readonly]{background:#F0F0EC;color:var(--muted)}
+textarea{min-height:80px;resize:vertical}
+input[type=number]::-webkit-inner-spin-button{opacity:.4}
+.invalid{border-color:var(--red)!important;background:#FFF5F5!important}
+.err{color:var(--red);font-size:12px}
+.err:empty{display:none}
+.banner{background:var(--y2);border:1px solid var(--y);padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px}
+
+/* Dashboard */
+.hero{background:var(--k);color:#fff;border-radius:16px;padding:30px 32px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;margin-bottom:14px;position:relative;overflow:hidden}
+.hero h1{font-size:28px;max-width:560px}
+.hero p{color:#BDBDB5;margin:8px 0 0;max-width:520px}
+.hero .ring{position:absolute;inset-inline-end:180px;top:-70px;width:200px;height:200px;border-radius:50%;border:34px solid var(--y);opacity:.9;pointer-events:none}
+.hero>*:not(.ring){position:relative}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.stat .l{color:var(--muted);font-size:13px;display:flex;align-items:center;gap:8px}
+.stat .l .ic{color:var(--k);background:var(--y);border-radius:6px;padding:3px;width:22px;height:22px}
+.stat .v{font-size:24px;font-weight:700;margin-top:10px}
+.stat .v .sub{font-size:12px;font-weight:500;color:var(--muted)}
+.dash-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+.quick{display:flex;align-items:center;gap:12px;width:100%;text-align:start;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.quick:hover{border-color:var(--k)}
+.quick .qi{width:40px;height:40px;border-radius:10px;background:var(--bg);display:grid;place-items:center}
+.quick.primary{background:var(--y);border-color:var(--y)}
+.quick.primary .qi{background:var(--k);color:var(--y)}
+.quick b{display:block}
+.quick small{color:var(--muted)}
+.quick.primary small{color:#3A3A00}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto}
+table.tbl{width:100%;border-collapse:collapse;min-width:720px}
+.tbl th{text-align:start;font-size:12px;color:var(--muted);font-weight:500;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover td{background:#FBFBF7}
+.num-id{font-weight:600;cursor:pointer;direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+.num-id:hover{text-decoration:underline;text-decoration-color:var(--y);text-decoration-thickness:3px}
+.actions{display:flex;gap:5px}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-unpaid{background:#FDECEC;color:#B42323}.b-partial{background:#FFF1CC;color:#8F5A00}.b-paid{background:#E2F5EA;color:#136B40}
+.empty{text-align:center;padding:40px 16px;color:var(--muted)}
+.empty .ic{width:36px;height:36px;color:#BBB}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
+.search{position:relative}
+.search .ic{position:absolute;inset-inline-start:11px;top:50%;transform:translateY(-50%);color:var(--muted);width:16px}
+.search input{padding-inline-start:36px}
+
+/* Editor */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.preview-col{align-self:stretch}
+.preview-col .sticky{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;padding-bottom:10px}
+.preview-label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px}
+.live{width:8px;height:8px;border-radius:50%;background:#1DB954;box-shadow:0 0 0 3px rgba(29,185,84,.2)}
+.preview-wrap{position:relative;overflow:hidden;border-radius:8px;background:#fff;border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.08)}
+.a4-scale{position:absolute;top:0;left:0;width:794px;transform-origin:0 0}
+.mtabs{display:none;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:12px}
+.mtabs button{flex:1;border:0;background:transparent;padding:9px;border-radius:7px;cursor:pointer;font-weight:600}
+.mtabs button.on{background:var(--k);color:var(--y)}
+.co-mini{display:flex;gap:12px;align-items:center}
+.co-mini img{width:48px;height:48px;border-radius:10px}
+.co-mini a{color:var(--k);cursor:pointer;text-decoration:underline;text-decoration-color:var(--y);text-decoration-thickness:2px;font-size:12px}
+.item{display:grid;grid-template-columns:26px repeat(3,minmax(0,1fr)) 34px;grid-template-areas:"no name name desc desc" "no qty price total del";gap:8px;padding:12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#FCFCFA;animation:enter .2s ease-out}
+.item .no{grid-area:no;width:24px;height:24px;border-radius:6px;background:var(--k);color:var(--y);display:grid;place-items:center;font-size:12px;font-weight:700}
+.a-name{grid-area:name}.a-desc{grid-area:desc}.a-qty{grid-area:qty}.a-price{grid-area:price}.a-total{grid-area:total}.a-del{grid-area:del;align-self:end;margin-bottom:2px}
+.mini{display:flex;flex-direction:column;gap:4px;min-width:0}
+.line-total{padding:9px 10px;border-radius:9px;background:var(--y2);font-weight:700;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.add-item{width:100%;border:1.5px dashed #C9C9C2;background:transparent;padding:11px;border-radius:10px;cursor:pointer;font-weight:600;display:flex;gap:8px;justify-content:center;align-items:center}
+.add-item:hover{border-color:var(--k);background:var(--y2)}
+.sumbox{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+.sumbox .r{display:flex;justify-content:space-between;padding:3px 0;color:var(--muted)}
+.sumbox .r b{color:var(--k)}
+.sumbox .g{display:flex;justify-content:space-between;align-items:center;font-size:16px;font-weight:700;background:var(--k);color:#fff;border-radius:10px;padding:12px 14px;margin-top:8px}
+.sumbox .g b{color:var(--y);font-size:20px}
+
+/* Settings */
+.uploads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.upload{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:12px}
+.thumb{width:92px;height:92px;flex:none;border-radius:10px;border:1px dashed #CFCFC8;display:grid;place-items:center;overflow:hidden;background:repeating-conic-gradient(#EFEFEA 0 25%,#fff 0 50%) 0 0/14px 14px;color:#AAA}
+.thumb img{max-width:100%;max-height:100%}
+.upload-info{display:flex;flex-direction:column;gap:6px;min-width:0}
+.next-no{display:inline-block;background:var(--k);color:var(--y);padding:3px 10px;border-radius:7px;font-weight:600;direction:ltr}
+
+/* Invoice view page */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:12px}
+.inv-page{max-width:860px;margin:0 auto}
+
+/* Overlays */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:90;display:grid;place-items:center;padding:16px;animation:enter .15s}
+.dialog{background:#fff;border-radius:14px;padding:22px;max-width:430px;width:100%}
+.dialog h3{margin:0 0 6px}
+.dialog p{margin:0 0 16px}
+.dialog.wide{max-width:900px;max-height:92vh;overflow:auto;padding:14px}
+.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dialog .fi{width:48px;height:48px;border-radius:12px;background:var(--y);display:grid;place-items:center;margin-bottom:12px}
+#busy{position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.72);color:#fff;display:none;place-items:center;text-align:center}
+#busy.on{display:grid}
+.spinner{width:40px;height:40px;border:4px solid #333;border-top-color:var(--y);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.t{background:var(--k);color:#fff;padding:10px 16px;border-radius:10px;animation:enter .2s;display:flex;gap:10px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.t:before{content:'';width:8px;height:8px;border-radius:50%;background:var(--y);flex:none}
+.t.err{background:var(--red)}
+.t.err:before{background:#fff}
+#print-root{display:none}
+#pdf-stage{position:fixed;top:0;left:0;z-index:-10;pointer-events:none}
+
+/* Responsive */
+@media(max-width:1100px){.dash-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.uploads{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters .field:first-child{grid-column:1/-1}}
+@media(max-width:1024px){
+  .split{grid-template-columns:1fr}
+  .mtabs{display:flex}
+  .split[data-mtab=form] .preview-col{display:none}
+  .split[data-mtab=preview] .form-col{display:none}
+  .preview-col .sticky{position:static;max-height:none;overflow:visible}
+}
+@media(max-width:640px){
+  main{padding:14px}
+  #topbar{padding:10px 14px;flex-wrap:wrap;gap:10px}
+  .nav{order:3;width:100%;margin:0}
+  .lang{margin-inline-start:auto}
+  .grid,.grid.g3{grid-template-columns:1fr}
+  .grid.g3.fees{grid-template-columns:1fr 1fr}
+  .hero{grid-template-columns:1fr;padding:24px}
+  .hero h1{font-size:22px}
+  .hero .ring{inset-inline-end:-60px}
+  .stat .v{font-size:19px}
+  .head-actions{width:100%}.head-actions .btn{flex:1}
+  .item{grid-template-columns:24px repeat(3,minmax(0,1fr)) 34px;grid-template-areas:"no name name name name" "no desc desc desc desc" "no qty price total del"}
+  .toolbar .btn{flex:1 1 40%}
+}
+
+/* ============ INVOICE (A4 @96dpi = 794px) ============ */
+.inv{width:794px;min-height:1120px;background:#fff;color:#111;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12.5px;line-height:1.55;display:flex;flex-direction:column;text-align:start}
+.inv *{box-sizing:border-box}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;padding:38px 44px 24px;gap:20px}
+.inv-brand{display:flex;gap:14px;align-items:center}
+.inv-logo{width:78px;height:78px;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#FFD600;flex:none}
+.inv-logo img{max-width:78px;max-height:78px}
+.inv-co{font-size:20px;font-weight:700;line-height:1.3}
+.inv-co-alt{font-size:12px;color:#777}
+.inv-contact{margin-top:4px;color:#555;font-size:11px;line-height:1.7}
+.inv-title{text-align:end;flex:none}
+.inv-word{font-size:36px;font-weight:700;line-height:1.1}
+.inv-no{display:inline-block;margin-top:10px;background:#000;color:#FFD600;padding:5px 12px;border-radius:8px;font-weight:700;font-size:13px}
+.inv-band{display:flex;height:6px;margin:0 44px}
+.inv-band i{display:block;height:6px}
+.inv-meta{display:flex;gap:16px;padding:22px 44px}
+.inv-box{border:1px solid #E8E8E8;border-radius:12px;padding:14px 16px;flex:1}
+.inv-box.wide{flex:1.3}
+.inv-box h4{margin:0 0 6px;font-size:11.5px;color:#888;font-weight:600}
+.inv-client{font-size:15px;font-weight:700;margin-bottom:2px}
+.inv-kv{display:flex;justify-content:space-between;padding:2px 0;gap:10px}
+.inv-kv span{color:#777}
+.inv-kv b{font-weight:600}
+.inv-items{padding:0 44px}
+.inv-table{width:100%;border-collapse:collapse}
+.inv-table th{background:#000;color:#fff;font-weight:600;font-size:11.5px;padding:10px 10px;text-align:start}
+.inv-table th.c,.inv-table td.c{text-align:center}
+.inv-table td{padding:10px;border-bottom:1px solid #EFEFEF;vertical-align:top}
+.inv-table tr.alt td{background:#FAFAF5}
+.inv-table .idx{width:34px;color:#888}
+.inv-table .dsc{color:#666;font-size:11.5px}
+.inv-table tr{page-break-inside:avoid}
+.inv-bottom{display:flex;gap:26px;padding:22px 44px 10px;align-items:flex-start}
+.inv-notes{flex:1}
+.inv-notes h4{margin:0 0 4px;font-size:12px}
+.inv-notes p{margin:0 0 14px;color:#555;white-space:pre-wrap;font-size:11.5px;line-height:1.75}
+.inv-totals{width:300px;flex:none}
+.inv-totals .tr{display:flex;justify-content:space-between;padding:6px 2px;border-bottom:1px dashed #E3E3E3}
+.inv-totals .tr span{color:#666}
+.inv-grand{margin-top:10px;background:#000;color:#fff;border-radius:12px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center}
+.inv-grand b{color:#FFD600;font-size:20px}
+.inv-grand small{color:#FFD600;font-size:11px;font-weight:600}
+.inv-sign{display:flex;gap:30px;padding:18px 44px 22px;margin-top:auto}
+.inv-sig{flex:1;text-align:center}
+.inv-sig .img{height:112px;display:flex;align-items:center;justify-content:center}
+.inv-sig img{max-height:112px;max-width:230px}
+.inv-sig .ln{border-top:1.5px solid #111;margin:6px 50px 6px}
+.inv-foot{background:#FFD600;padding:12px 44px;display:flex;justify-content:space-between;gap:16px;font-size:11px;font-weight:600;color:#000}
+
+@media print{
+  body{background:#fff}
+  body>*:not(#print-root){display:none!important}
+  #print-root{display:block!important}
+  @page{size:A4;margin:0}
+  .inv{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header id="topbar"></header>
+<main id="app"></main>
+<div id="modal"></div>
+<div id="busy"><div><div class="spinner"></div><div id="busyText"></div></div></div>
+<div id="toast"></div>
+<div id="print-root"></div>
+<div id="pdf-stage"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+/* =========================================================
+   نظام فواتير أعمال فيتوزون التجارية
+   Layers: i18n → Storage Adapter → Repository → Domain (calc) → Views
+   To move to a server DB later: implement a new adapter with the same
+   methods (init/getMeta/setMeta/listInvoices/saveInvoice/deleteInvoice)
+   and assign it inside Repo.init(). Nothing else changes.
+   ========================================================= */
+
+const DEFAULT_LOGO = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAEYARgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7Fooor+Ej9bCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigA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";
+
+/* ---------------- i18n ---------------- */
+const T = {
+ar:{appName:'نظام فواتير فيتوزون',appSub:'أعمال فيتوزون التجارية',navHome:'الرئيسية',navNew:'فاتورة جديدة',navList:'الفواتير السابقة',navSettings:'الإعدادات',langBtn:'English',
+heroTitle:'فواتير فيتوزون، جاهزة للطباعة والإرسال',heroSub:'أدخل بيانات العميل والمنتجات والرسوم، والنظام يحسب الإجمالي ويجهّز ملف PDF.',createNew:'إنشاء فاتورة جديدة',
+statCount:'عدد الفواتير',statTotal:'إجمالي قيمة الفواتير',statToday:'فواتير اليوم',outstanding:'مبالغ لم تُحصَّل',recent:'آخر الفواتير',viewAll:'عرض الكل',
+empty:'لا توجد فواتير حتى الآن. ابدأ بإنشاء أول فاتورة.',noResults:'لا توجد فواتير تطابق البحث',qNew:'فاتورة جديدة',qNewSub:'إدخال يدوي مع معاينة مباشرة',qList:'الفواتير السابقة',qListSub:'بحث وفلترة وتحميل',qSettings:'إعدادات الفواتير',qSettingsSub:'الشعار والتوقيع والختم',
+newInvoice:'فاتورة جديدة',editInvoice:'تعديل الفاتورة',cancel:'إلغاء',save:'حفظ الفاتورة',createPdf:'إنشاء وتحميل PDF',form:'النموذج',preview:'المعاينة',livePreview:'معاينة مباشرة',
+secCompany:'بيانات الشركة',editInSettings:'تعديل من الإعدادات',secClient:'بيانات العميل',clientName:'اسم العميل',phone:'رقم الهاتف',email:'البريد الإلكتروني',address:'العنوان',city:'المدينة / الولاية',
+secInvoice:'بيانات الفاتورة',invNo:'رقم الفاتورة',issueDate:'تاريخ الإصدار',dueDate:'تاريخ الاستحقاق',currency:'العملة',status:'حالة الدفع',paidAmount:'المبلغ المدفوع',
+st_unpaid:'غير مدفوعة',st_partial:'مدفوعة جزئياً',st_paid:'مدفوعة بالكامل',
+secItems:'المنتجات / الخدمات',item:'البيان',itemPh:'اسم المنتج أو الخدمة',desc:'الوصف',qty:'الكمية',unitPrice:'سعر الوحدة',lineTotal:'الإجمالي',addItem:'إضافة منتج',
+secFees:'الرسوم والتكاليف',subtotal:'إجمالي المنتجات',shipping:'الشحن',service:'رسوم الخدمة',delivery:'التوصيل',customs:'الجمارك',other:'رسوم أخرى',discount:'الخصم',grandTotal:'الإجمالي النهائي',paid:'المدفوع',remaining:'المتبقي',
+secNotes:'الملاحظات والشروط',notes:'ملاحظات الفاتورة',terms:'الشروط والأحكام',
+invoiceWord:'فاتورة',billTo:'فاتورة إلى',invDetails:'تفاصيل الفاتورة',approvedSig:'التوقيع المعتمد',companyStamp:'ختم الشركة',taxNo:'الرقم الضريبي',noItems:'لم تتم إضافة منتجات',
+required:'هذا الحقل مطلوب',noNegative:'القيم السالبة غير مسموحة',dueBefore:'تاريخ الاستحقاق قبل تاريخ الإصدار',badEmail:'صيغة البريد الإلكتروني غير صحيحة',needItem:'أضف منتجاً واحداً على الأقل مع الاسم والكمية',badPaid:'أدخل مبلغاً أكبر من 0 وأقل من الإجمالي',fixErrors:'راجع الحقول المحددة باللون الأحمر',
+saved:'تم حفظ الفاتورة',deleted:'تم حذف الفاتورة',duplicated:'تم نسخ الفاتورة، راجعها ثم احفظها',
+actPreview:'معاينة',actPdf:'تحميل PDF',actPrint:'طباعة',actEdit:'تعديل',actDup:'نسخ الفاتورة',actDelete:'حذف',actShare:'مشاركة',back:'رجوع',
+confirmTitle:'حذف الفاتورة',confirmDel:'سيتم حذف الفاتورة نهائياً ولا يمكن استرجاعها:',delete:'حذف',close:'إغلاق',
+searchLbl:'بحث',search:'رقم الفاتورة، اسم العميل أو الهاتف',from:'من تاريخ',to:'إلى تاريخ',allStatus:'كل الحالات',clear:'مسح الفلاتر',results:'فاتورة',
+colNo:'رقم الفاتورة',colClient:'العميل',colDate:'التاريخ',colTotal:'الإجمالي',colStatus:'الحالة',colActions:'الإجراءات',
+settingsTitle:'إعدادات الفواتير',companyName:'اسم الشركة (عربي)',companyNameEn:'اسم الشركة (English)',website:'الموقع الإلكتروني',taxNumber:'الرقم الضريبي',
+secBrand:'الهوية',logo:'الشعار',signature:'التوقيع الإلكتروني',stamp:'ختم الشركة',pngHint:'PNG بخلفية شفافة لأفضل نتيجة',logoHint:'يظهر أعلى كل فاتورة',upload:'رفع صورة',remove:'حذف',resetLogo:'استعادة شعار فيتوزون',
+secInvSettings:'إعدادات الفاتورة',defCurrency:'العملة الافتراضية',startNumber:'بداية ترقيم الفواتير',dueDays:'مدة الاستحقاق الافتراضية (أيام)',footerText:'نص أسفل الفاتورة (عربي)',footerTextEn:'نص أسفل الفاتورة (English)',defTerms:'الشروط والأحكام الافتراضية',nextNo:'رقم الفاتورة القادمة:',
+saveSettings:'حفظ الإعدادات',settingsSaved:'تم حفظ الإعدادات',badStart:'بداية الترقيم يجب أن تكون رقماً صحيحاً من 1 فأكثر',companyReq:'اسم الشركة مطلوب',badImage:'الملف المختار ليس صورة',tooBig:'حجم الصورة أكبر من 3MB',uploaded:'تم رفع الصورة، اضغط حفظ الإعدادات',pngTip:'يُفضَّل PNG شفاف للتوقيع والختم',
+generating:'جاري إنشاء ملف PDF...',pdfReady:'ملف PDF جاهز',download:'تحميل',shareNow:'مشاركة الآن',shareUnsupported:'المشاركة المباشرة غير مدعومة في هذا المتصفح. حمّل الملف وأرسله يدوياً.',pdfErr:'تعذّر إنشاء PDF. استخدم زر الطباعة ثم اختر حفظ كـ PDF.',
+memWarn:'التخزين الدائم غير متاح في هذه البيئة، وستُفقد الفواتير عند إغلاق الصفحة. افتح الملف مباشرة في المتصفح لحفظ البيانات.'},
+en:{appName:'Fitozon Invoicing',appSub:'Fitozon Business Trading',navHome:'Dashboard',navNew:'New invoice',navList:'Invoices',navSettings:'Settings',langBtn:'العربية',
+heroTitle:'Fitozon invoices, ready to print and send',heroSub:'Enter the client, items and fees. The system calculates totals and prepares the PDF.',createNew:'Create new invoice',
+statCount:'Invoices',statTotal:'Total invoiced',statToday:"Today's invoices",outstanding:'Outstanding',recent:'Recent invoices',viewAll:'View all',
+empty:'No invoices yet. Create your first invoice.',noResults:'No invoices match your search',qNew:'New invoice',qNewSub:'Manual entry with live preview',qList:'Invoices',qListSub:'Search, filter and download',qSettings:'Invoice settings',qSettingsSub:'Logo, signature and stamp',
+newInvoice:'New invoice',editInvoice:'Edit invoice',cancel:'Cancel',save:'Save invoice',createPdf:'Create & download PDF',form:'Form',preview:'Preview',livePreview:'Live preview',
+secCompany:'Company details',editInSettings:'Edit in settings',secClient:'Client details',clientName:'Client name',phone:'Phone',email:'Email',address:'Address',city:'City / State',
+secInvoice:'Invoice details',invNo:'Invoice number',issueDate:'Issue date',dueDate:'Due date',currency:'Currency',status:'Payment status',paidAmount:'Amount paid',
+st_unpaid:'Unpaid',st_partial:'Partially paid',st_paid:'Paid',
+secItems:'Products / services',item:'Item',itemPh:'Product or service name',desc:'Description',qty:'Qty',unitPrice:'Unit price',lineTotal:'Total',addItem:'Add item',
+secFees:'Fees & charges',subtotal:'Items subtotal',shipping:'Shipping',service:'Service fee',delivery:'Delivery',customs:'Customs',other:'Other fees',discount:'Discount',grandTotal:'Grand total',paid:'Paid',remaining:'Balance due',
+secNotes:'Notes & terms',notes:'Invoice notes',terms:'Terms & conditions',
+invoiceWord:'INVOICE',billTo:'Bill to',invDetails:'Invoice details',approvedSig:'Authorized signature',companyStamp:'Company stamp',taxNo:'Tax No.',noItems:'No items added',
+required:'This field is required',noNegative:'Negative values are not allowed',dueBefore:'Due date is before issue date',badEmail:'Invalid email format',needItem:'Add at least one item with a name and quantity',badPaid:'Enter an amount above 0 and below the total',fixErrors:'Check the fields marked in red',
+saved:'Invoice saved',deleted:'Invoice deleted',duplicated:'Invoice copied. Review it, then save',
+actPreview:'Preview',actPdf:'Download PDF',actPrint:'Print',actEdit:'Edit',actDup:'Duplicate',actDelete:'Delete',actShare:'Share',back:'Back',
+confirmTitle:'Delete invoice',confirmDel:'This invoice will be permanently deleted:',delete:'Delete',close:'Close',
+searchLbl:'Search',search:'Invoice no., client name or phone',from:'From',to:'To',allStatus:'All statuses',clear:'Clear filters',results:'invoices',
+colNo:'Invoice no.',colClient:'Client',colDate:'Date',colTotal:'Total',colStatus:'Status',colActions:'Actions',
+settingsTitle:'Invoice settings',companyName:'Company name (Arabic)',companyNameEn:'Company name (English)',website:'Website',taxNumber:'Tax number',
+secBrand:'Brand',logo:'Logo',signature:'E-signature',stamp:'Company stamp',pngHint:'Transparent PNG works best',logoHint:'Shown at the top of every invoice',upload:'Upload image',remove:'Remove',resetLogo:'Restore Fitozon logo',
+secInvSettings:'Invoice defaults',defCurrency:'Default currency',startNumber:'Invoice numbering starts at',dueDays:'Default payment term (days)',footerText:'Footer text (Arabic)',footerTextEn:'Footer text (English)',defTerms:'Default terms & conditions',nextNo:'Next invoice number:',
+saveSettings:'Save settings',settingsSaved:'Settings saved',badStart:'Numbering start must be a whole number of 1 or more',companyReq:'Company name is required',badImage:'The selected file is not an image',tooBig:'Image is larger than 3MB',uploaded:'Image uploaded. Click Save settings',pngTip:'Transparent PNG is recommended for signature and stamp',
+generating:'Creating PDF...',pdfReady:'PDF is ready',download:'Download',shareNow:'Share now',shareUnsupported:'Direct sharing is not supported in this browser. Download the file and send it manually.',pdfErr:'Could not create the PDF. Use Print and choose Save as PDF.',
+memWarn:'Persistent storage is unavailable here; invoices will be lost when the page closes. Open the file directly in your browser to keep data.'}
+};
+const CUR = {
+  SDG:{ar:'ج.س',en:'SDG',nameAr:'جنيه سوداني',nameEn:'Sudanese Pound'},
+  USD:{ar:'دولار',en:'USD',nameAr:'دولار أمريكي',nameEn:'US Dollar'},
+  SAR:{ar:'ر.س',en:'SAR',nameAr:'ريال سعودي',nameEn:'Saudi Riyal'},
+  AED:{ar:'د.إ',en:'AED',nameAr:'درهم إماراتي',nameEn:'UAE Dirham'},
+  EGP:{ar:'ج.م',en:'EGP',nameAr:'جنيه مصري',nameEn:'Egyptian Pound'}
+};
+const DEFAULT_SETTINGS = {
+  companyName:'أعمال فيتوزون التجارية', companyNameEn:'Fitozon Business Trading',
+  address:'', phone:'', email:'', website:'', taxNumber:'',
+  logo:DEFAULT_LOGO, signature:'', stamp:'',
+  currency:'SDG', startNumber:1, dueDays:7,
+  footerText:'شكراً لتعاملكم مع فيتوزون', footerTextEn:'Thank you for choosing Fitozon',
+  terms:'الأسعار تشمل الرسوم الموضحة في الفاتورة.\nيتم تنفيذ الطلب بعد تأكيد الدفع.'
+};
+
+/* ---------------- Storage adapters ---------------- */
+const IDBAdapter = {
+  db:null,
+  init(){ return new Promise((res,rej)=>{ const r=indexedDB.open('fitozon_invoices',1);
+    r.onupgradeneeded=()=>{const d=r.result; d.createObjectStore('invoices',{keyPath:'id'}); d.createObjectStore('meta',{keyPath:'key'});};
+    r.onsuccess=()=>{this.db=r.result;res()}; r.onerror=()=>rej(r.error); }); },
+  store(n,m){return this.db.transaction(n,m).objectStore(n)},
+  req(r){return new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+  async getMeta(k){const v=await this.req(this.store('meta','readonly').get(k));return v?v.value:null},
+  setMeta(k,value){return this.req(this.store('meta','readwrite').put({key:k,value}))},
+  listInvoices(){return this.req(this.store('invoices','readonly').getAll())},
+  saveInvoice(inv){return this.req(this.store('invoices','readwrite').put(inv))},
+  deleteInvoice(id){return this.req(this.store('invoices','readwrite').delete(id))}
+};
+const MemoryAdapter = {
+  meta:{}, inv:{},
+  async init(){}, async getMeta(k){return this.meta[k]??null}, async setMeta(k,v){this.meta[k]=v},
+  async listInvoices(){return Object.values(this.inv).map(x=>structuredClone(x))},
+  async saveInvoice(i){this.inv[i.id]=structuredClone(i)}, async deleteInvoice(id){delete this.inv[id]}
+};
+
+/* ---------------- Repository ---------------- */
+const Repo = {
+  adapter:null, persistent:true,
+  async init(){
+    try{ if(!window.indexedDB) throw 0; await IDBAdapter.init(); await IDBAdapter.getMeta('ping'); this.adapter=IDBAdapter; }
+    catch(e){ this.adapter=MemoryAdapter; this.persistent=false; }
+  },
+  async getSettings(){ return {...DEFAULT_SETTINGS, ...((await this.adapter.getMeta('settings'))||{})}; },
+  saveSettings(s){ return this.adapter.setMeta('settings',s); },
+  async listInvoices(){ const l=await this.adapter.listInvoices(); return l.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))); },
+  async getInvoice(id){ return (await this.adapter.listInvoices()).find(i=>i.id===id)||null; },
+  saveInvoice(i){ return this.adapter.saveInvoice(structuredClone(i)); },
+  deleteInvoice(id){ return this.adapter.deleteInvoice(id); },
+  async nextNumber(peek){
+    const year=new Date().getFullYear();
+    const counters=(await this.adapter.getMeta('counters'))||{};
+    const s=await this.getSettings();
+    const seq=Math.max(counters[year]||0,(parseInt(s.startNumber)||1)-1)+1;
+    if(!peek){counters[year]=seq; await this.adapter.setMeta('counters',counters);}
+    return `FTZ-INV-${year}-${String(seq).padStart(6,'0')}`;
+  }
+};
+
+/* ---------------- Helpers ---------------- */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const S={lang:'ar',view:'dashboard',settings:null,settingsDraft:null,draft:null,editingId:null,invoiceId:null,mobileTab:'form',filters:{q:'',status:'',from:'',to:''},cache:[]};
+const t=k=>(T[S.lang][k]??k);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const r2=n=>Math.round((+n||0)*100)/100;
+const num=v=>{const n=parseFloat(v);return isFinite(n)&&n>0?n:0};
+const NF=new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const QF=new Intl.NumberFormat('en-US',{maximumFractionDigits:3});
+const fmt=n=>NF.format(r2(n));
+const curLabel=(c,lang=S.lang)=>(CUR[c]?CUR[c][lang]:c);
+const money=(n,c,lang=S.lang)=>lang==='ar'?`<bdi dir="ltr">${fmt(n)}</bdi> ${curLabel(c,lang)}`:`${curLabel(c,lang)} <bdi dir="ltr">${fmt(n)}</bdi>`;
+const fmtDate=iso=>{if(!iso)return '—';const[y,m,d]=iso.split('-');return `<bdi dir="ltr">${d}/${m}/${y}</bdi>`};
+const todayISO=(off=0)=>{const d=new Date();d.setDate(d.getDate()+off);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const getPath=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o);
+const setPath=(o,p,v)=>{const ks=p.split('.');const last=ks.pop();ks.reduce((a,k)=>a[k],o)[last]=v};
+const badge=s=>`<span class="badge b-${s}">${t('st_'+s)}</span>`;
+const fileName=inv=>`Fitozon-Invoice-${inv.number}.pdf`;
+const ICONS={plus:'<path d="M12 5v14M5 12h14"/>',home:'<path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',settings:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',printer:'<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/>',calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',back:'<path d="M15 18l-6-6 6-6"/>'};
+const ic=(n,cls='')=>`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+
+function toast(msg,type='ok'){const el=document.createElement('div');el.className='t '+type;el.textContent=msg;$('#toast').appendChild(el);setTimeout(()=>el.remove(),3200)}
+function busy(on){$('#busyText').textContent=t('generating');$('#busy').classList.toggle('on',on)}
+function waitImages(root){return Promise.all([...root.querySelectorAll('img')].map(img=>img.complete?Promise.resolve():new Promise(r=>{img.onload=img.onerror=r})))}
+function readFile(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f)})}
+
+/* ---------------- Domain ---------------- */
+function calc(inv){
+  const lines=inv.items.map(it=>r2(num(it.qty)*num(it.price)));
+  const sub=r2(lines.reduce((a,b)=>a+b,0));
+  const f=inv.fees;
+  const fees=r2(num(f.shipping)+num(f.service)+num(f.delivery)+num(f.customs)+num(f.other));
+  const discount=r2(num(f.discount));
+  const total=r2(Math.max(0,sub+fees-discount));
+  const paid=inv.status==='paid'?total:inv.status==='partial'?r2(Math.min(num(inv.paidAmount),total)):0;
+  return {lines,sub,fees,discount,total,paid,due:r2(total-paid)};
+}
+const isFilled=it=>String(it.name||'').trim()||String(it.desc||'').trim()||num(it.price)>0;
+async function newDraft(){
+  const st=S.settings;
+  return {id:null,number:await Repo.nextNumber(true),issueDate:todayISO(),dueDate:todayISO(+st.dueDays||0),currency:st.currency,status:'unpaid',paidAmount:'',
+    client:{name:'',phone:'',email:'',address:'',city:''},items:[{name:'',desc:'',qty:1,price:''}],
+    fees:{shipping:'',service:'',delivery:'',customs:'',other:'',discount:''},notes:'',terms:st.terms||'',createdAt:null,updatedAt:null};
+}
+
+/* ---------------- Invoice template ---------------- */
+function renderInvoice(inv,st,lang){
+  const L=T[lang], c=calc(inv), cur=curLabel(inv.currency,lang), dir=lang==='ar'?'rtl':'ltr';
+  const coName=lang==='ar'?st.companyName:(st.companyNameEn||st.companyName);
+  const coAlt=lang==='ar'?st.companyNameEn:st.companyName;
+  const contact=[st.address&&`<span dir="auto">${esc(st.address)}</span>`, st.phone&&`${L.phone}: <bdi dir="ltr">${esc(st.phone)}</bdi>`, st.email&&`<bdi dir="ltr">${esc(st.email)}</bdi>`, st.website&&`<bdi dir="ltr">${esc(st.website)}</bdi>`].filter(Boolean);
+  const items=inv.items.filter(isFilled);
+  const rows=items.length?items.map((it,i)=>`<tr class="${i%2?'alt':''}"><td class="c idx">${i+1}</td><td><b dir="auto">${esc(it.name)||'—'}</b></td><td class="dsc"><span dir="auto">${esc(it.desc)}</span></td><td class="c">${QF.format(num(it.qty))}</td><td class="c">${fmt(num(it.price))}</td><td class="c"><b>${fmt(r2(num(it.qty)*num(it.price)))}</b></td></tr>`).join('')
+    :`<tr><td colspan="6" class="c" style="color:#999;padding:22px">${L.noItems}</td></tr>`;
+  const fr=(k,v,neg)=>v>0?`<div class="tr"><span>${L[k]}</span><b><bdi dir="ltr">${neg?'-':''}${fmt(v)}</bdi></b></div>`:'';
+  const f=inv.fees;
+  const footText=lang==='ar'?st.footerText:(st.footerTextEn||st.footerText);
+  return `<div class="inv" dir="${dir}" lang="${lang}">
+  <div class="inv-top">
+    <div class="inv-brand">
+      <div class="inv-logo">${st.logo?`<img src="${st.logo}" alt="">`:''}</div>
+      <div><div class="inv-co">${esc(coName)}</div>${coAlt?`<div class="inv-co-alt" dir="auto">${esc(coAlt)}</div>`:''}
+      ${contact.length?`<div class="inv-contact">${contact.join('<br>')}</div>`:''}</div>
+    </div>
+    <div class="inv-title"><div class="inv-word">${L.invoiceWord}</div><div class="inv-no"><bdi dir="ltr">${esc(inv.number)}</bdi></div></div>
+  </div>
+  <div class="inv-band"><i style="flex:7;background:#FFD600"></i><i style="flex:3;background:#000"></i></div>
+  <div class="inv-meta">
+    <div class="inv-box wide"><h4>${L.billTo}</h4>
+      <div class="inv-client" dir="auto">${esc(inv.client.name)||'—'}</div>
+      ${inv.client.phone?`<div><bdi dir="ltr">${esc(inv.client.phone)}</bdi></div>`:''}
+      ${inv.client.email?`<div><bdi dir="ltr">${esc(inv.client.email)}</bdi></div>`:''}
+      ${(inv.client.address||inv.client.city)?`<div style="color:#555" dir="auto">${[inv.client.address,inv.client.city].filter(Boolean).map(esc).join('، ')}</div>`:''}
+    </div>
+    <div class="inv-box"><h4>${L.invDetails}</h4>
+      <div class="inv-kv"><span>${L.issueDate}</span><b>${fmtDate(inv.issueDate)}</b></div>
+      <div class="inv-kv"><span>${L.dueDate}</span><b>${fmtDate(inv.dueDate)}</b></div>
+      <div class="inv-kv"><span>${L.currency}</span><b>${lang==='ar'?CUR[inv.currency]?.nameAr:CUR[inv.currency]?.nameEn}</b></div>
+      <div class="inv-kv"><span>${L.status}</span><b><span class="badge b-${inv.status}">${L['st_'+inv.status]}</span></b></div>
+    </div>
+  </div>
+  <div class="inv-items"><table class="inv-table"><thead><tr><th class="c">#</th><th>${L.item}</th><th>${L.desc}</th><th class="c">${L.qty}</th><th class="c">${L.unitPrice}</th><th class="c">${L.lineTotal}</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="inv-bottom">
+    <div class="inv-notes">
+      ${inv.notes?`<h4>${L.notes}</h4><p dir="auto">${esc(inv.notes)}</p>`:''}
+      ${inv.terms?`<h4>${L.terms}</h4><p dir="auto">${esc(inv.terms)}</p>`:''}
+    </div>
+    <div class="inv-totals">
+      <div class="tr"><span>${L.subtotal}</span><b><bdi dir="ltr">${fmt(c.sub)}</bdi></b></div>
+      ${fr('shipping',num(f.shipping))}${fr('service',num(f.service))}${fr('delivery',num(f.delivery))}${fr('customs',num(f.customs))}${fr('other',num(f.other))}${fr('discount',c.discount,true)}
+      <div class="inv-grand"><span>${L.grandTotal}</span><div style="text-align:end"><b><bdi dir="ltr">${fmt(c.total)}</bdi></b> <small>${cur}</small></div></div>
+      ${inv.status!=='unpaid'?`<div class="tr" style="margin-top:8px"><span>${L.paid}</span><b><bdi dir="ltr">${fmt(c.paid)}</bdi></b></div><div class="tr"><span>${L.remaining}</span><b><bdi dir="ltr">${fmt(c.due)}</bdi></b></div>`:''}
+    </div>
+  </div>
+  <div class="inv-sign">
+    <div class="inv-sig"><div class="img">${st.signature?`<img src="${st.signature}" alt="">`:''}</div><div class="ln"></div><b>${L.approvedSig}</b></div>
+    <div class="inv-sig"><div class="img">${st.stamp?`<img src="${st.stamp}" alt="">`:''}</div><div class="ln"></div><b>${L.companyStamp}</b></div>
+  </div>
+  <div class="inv-foot"><span dir="auto">${esc(footText)}</span><span>${st.taxNumber?`${L.taxNo}: <bdi dir="ltr">${esc(st.taxNumber)}</bdi>`:(st.website?`<bdi dir="ltr">${esc(st.website)}</bdi>`:'')}</span></div>
+</div>`;
+}
+
+/* ---------------- PDF / Print / Share ---------------- */
+/* html2canvas paints text word-by-word in LTR, which shifts Arabic words and
+   swallows the spaces between them. On the off-screen PDF copy only, wrap each
+   Arabic word in its own span (spaces stay as real text between spans) and
+   anchor it with RLM marks so punctuation stays on the correct side. */
+function fixArabicSpacing(root){
+  const AR=/[\u0600-\u06FF]/, w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT), nodes=[];
+  while(w.nextNode()) if(AR.test(w.currentNode.nodeValue)) nodes.push(w.currentNode);
+  nodes.forEach(n=>{
+    const frag=document.createDocumentFragment();
+    n.nodeValue.split(/(\s+)/).forEach(tok=>{
+      if(!tok) return;
+      if(/^\s+$/.test(tok)){frag.appendChild(document.createTextNode(tok));return}
+      const sp=document.createElement('span');
+      sp.textContent=AR.test(tok)?'\u200F'+tok+'\u200F':tok;
+      frag.appendChild(sp);
+    });
+    n.parentNode.replaceChild(frag,n);
+  });
+}
+async function buildPdf(inv){
+  if(!window.html2pdf) throw new Error('html2pdf not loaded');
+  busy(true);
+  const stage=$('#pdf-stage');
+  try{
+    try{await document.fonts.ready}catch(e){}
+    stage.innerHTML=renderInvoice(inv,S.settings,S.lang);
+    await waitImages(stage);
+    fixArabicSpacing(stage);
+    return await html2pdf().set({
+      margin:0, filename:fileName(inv),
+      image:{type:'jpeg',quality:0.97},
+      html2canvas:{scale:3,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true},
+      pagebreak:{mode:['css','legacy'],avoid:['tr','.inv-bottom','.inv-sign']}
+    }).from(stage.firstElementChild).outputPdf('blob');
+  } finally { stage.innerHTML=''; busy(false); }
+}
+function saveBlob(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000)}
+async function downloadPdf(inv){ try{ saveBlob(await buildPdf(inv),fileName(inv)); }catch(e){ console.error(e); toast(t('pdfErr'),'err'); } }
+async function printInvoice(inv){
+  const pr=$('#print-root'); pr.innerHTML=renderInvoice(inv,S.settings,S.lang);
+  await waitImages(pr); try{await document.fonts.ready}catch(e){}
+  setTimeout(()=>window.print(),60);
+}
+window.addEventListener('afterprint',()=>{$('#print-root').innerHTML=''});
+async function shareInvoice(inv){
+  let blob; try{blob=await buildPdf(inv)}catch(e){return toast(t('pdfErr'),'err')}
+  const name=fileName(inv), file=new File([blob],name,{type:'application/pdf'});
+  const can=!!(navigator.canShare&&navigator.canShare({files:[file]}));
+  const m=$('#modal');
+  m.innerHTML=`<div class="overlay"><div class="dialog"><div class="fi">${ic('file')}</div><h3>${t('pdfReady')}</h3><p class="muted"><bdi dir="ltr">${esc(name)}</bdi></p>
+  ${can?'':`<p class="muted sm">${t('shareUnsupported')}</p>`}
+  <div class="row end"><button class="btn ghost" id="dX">${t('close')}</button><button class="btn dark" id="dDl">${ic('download')}${t('download')}</button>${can?`<button class="btn yellow" id="dShare">${ic('share')}${t('shareNow')}</button>`:''}</div></div></div>`;
+  const close=()=>m.innerHTML='';
+  $('#dX').onclick=close; $('#dDl').onclick=()=>{saveBlob(blob,name);close()};
+  if(can) $('#dShare').onclick=async()=>{try{await navigator.share({files:[file],title:name});close()}catch(err){if(err.name!=='AbortError')toast(t('pdfErr'),'err')}};
+}
+function confirmBox(msg){
+  return new Promise(res=>{const m=$('#modal');
+    m.innerHTML=`<div class="overlay"><div class="dialog"><h3>${t('confirmTitle')}</h3><p>${msg}</p><div class="row end"><button class="btn ghost" id="mNo">${t('cancel')}</button><button class="btn danger" id="mYes">${ic('trash')}${t('delete')}</button></div></div></div>`;
+    const close=v=>{m.innerHTML='';res(v)}; $('#mNo').onclick=()=>close(false); $('#mYes').onclick=()=>close(true);});
+}
+function openPreview(inv){
+  const m=$('#modal');
+  m.innerHTML=`<div class="overlay"><div class="dialog wide"><div class="dialog-head"><b><bdi dir="ltr">${esc(inv.number)}</bdi></b><button class="icon-btn" data-close>${ic('x')}</button></div><div class="preview-wrap"><div class="a4-scale">${renderInvoice(inv,S.settings,S.lang)}</div></div></div></div>`;
+  m.onclick=e=>{if(e.target.closest('[data-close]')||e.target.classList.contains('overlay')){m.innerHTML='';m.onclick=null}};
+  requestAnimationFrame(fitPreview); waitImages(m).then(fitPreview);
+}
+function fitPreview(){
+  $$('.preview-wrap').forEach(w=>{const s=w.querySelector('.a4-scale');if(!s||!w.clientWidth)return;const sc=w.clientWidth/794;s.style.transform=`scale(${sc})`;w.style.height=(s.offsetHeight*sc)+'px'});
+}
+
+/* ---------------- Router ---------------- */
+function navigate(view,params={}){Object.assign(S,params);if(view!=='settings')S.settingsDraft=null;S.view=view;render();window.scrollTo({top:0})}
+async function render(){
+  document.documentElement.dir=S.lang==='ar'?'rtl':'ltr'; document.documentElement.lang=S.lang;
+  document.title=S.lang==='ar'?'نظام فواتير أعمال فيتوزون التجارية':'Fitozon Business Trading Invoicing';
+  renderTopbar();
+  const app=$('#app'); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
+  await ({dashboard:viewDashboard,editor:viewEditor,list:viewList,settings:viewSettings,invoice:viewInvoice})[S.view](app);
+}
+function renderTopbar(){
+  const on=S.view==='editor'?(S.editingId?'list':'new'):S.view==='invoice'?'list':S.view;
+  $('#topbar').innerHTML=`<div class="brand"><img src="${S.settings.logo||DEFAULT_LOGO}" alt="Fitozon"><div>${t('appName')}<small>${t('appSub')}</small></div></div>
+  <nav class="nav">${[['dashboard','home','navHome'],['new','plus','navNew'],['list','list','navList'],['settings','settings','navSettings']].map(([v,i,l])=>`<button class="${on===v?'on':''}" ${v==='new'?'data-action="new"':`data-action="go" data-view="${v}"`}>${ic(i)}${t(l)}</button>`).join('')}</nav>
+  <button class="lang" data-action="lang">${ic('globe')}${t('langBtn')}</button>`;
+}
+const memBanner=()=>Repo.persistent?'':`<div class="banner">${t('memWarn')}</div>`;
+const ACT={view:['eye','actPreview'],pdf:['download','actPdf'],print:['printer','actPrint'],edit:['edit','actEdit'],dup:['copy','actDup'],share:['share','actShare'],del:['trash','actDelete']};
+const actBtn=(a,id)=>`<button class="icon-btn ${a==='del'?'del':''}" title="${t(ACT[a][1])}" aria-label="${t(ACT[a][1])}" data-action="${a}" data-id="${id}">${ic(ACT[a][0])}</button>`;
+
+function invoiceTable(list,compact,emptyMsg){
+  if(!list.length) return `<div class="empty">${ic('file')}<p>${emptyMsg||t('empty')}</p>${emptyMsg?'':`<button class="btn yellow" data-action="new">${ic('plus')}${t('createNew')}</button>`}</div>`;
+  const acts=compact?['view','pdf']:['view','pdf','print','share','edit','dup','del'];
+  return `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>${t('colNo')}</th><th>${t('colClient')}</th><th>${t('colDate')}</th><th>${t('colTotal')}</th><th>${t('colStatus')}</th><th>${t('colActions')}</th></tr></thead><tbody>
+  ${list.map(i=>`<tr><td><span class="num-id" data-action="view" data-id="${i.id}">${esc(i.number)}</span></td><td><b>${esc(i.client.name)}</b><div class="muted sm"><bdi dir="ltr">${esc(i.client.phone)}</bdi></div></td><td>${fmtDate(i.issueDate)}</td><td><b>${money(calc(i).total,i.currency)}</b></td><td>${badge(i.status)}</td><td><div class="actions">${acts.map(a=>actBtn(a,i.id)).join('')}</div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+/* ---------------- Views ---------------- */
+async function viewDashboard(app){
+  const list=await Repo.listInvoices(), td=todayISO(), main=S.settings.currency;
+  const byCur={}, due={};
+  list.forEach(i=>{const c=calc(i);byCur[i.currency]=(byCur[i.currency]||0)+c.total;if(c.due>0)due[i.currency]=(due[i.currency]||0)+c.due;});
+  const curVal=o=>{const ks=Object.keys(o);if(!ks.length)return money(0,main);const first=ks.includes(main)?main:ks[0];const rest=ks.filter(k=>k!==first).map(k=>money(o[k],k)).join('<br>');return money(o[first],first)+(rest?`<div class="sub">${rest}</div>`:'')};
+  const stat=(i,l,v)=>`<div class="stat"><div class="l">${ic(i)}${l}</div><div class="v">${v}</div></div>`;
+  app.innerHTML=`${memBanner()}
+  <section class="hero"><span class="ring"></span><div><h1>${t('heroTitle')}</h1><p>${t('heroSub')}</p></div><button class="btn yellow lg" data-action="new">${ic('plus')}${t('createNew')}</button></section>
+  <section class="stats">${stat('file',t('statCount'),list.length)}${stat('cash',t('statTotal'),curVal(byCur))}${stat('calendar',t('statToday'),list.filter(i=>i.issueDate===td).length)}${stat('clock',t('outstanding'),curVal(due))}</section>
+  <div class="dash-grid">
+    <div class="card"><div class="card-head"><h3><i class="bar"></i>${t('recent')}</h3>${list.length?`<button class="btn sm ghost" data-action="go" data-view="list">${t('viewAll')}</button>`:''}</div>${invoiceTable(list.slice(0,6),true)}</div>
+    <div>
+      <button class="quick primary" data-action="new"><span class="qi">${ic('plus')}</span><span><b>${t('qNew')}</b><small>${t('qNewSub')}</small></span></button>
+      <button class="quick" data-action="go" data-view="list"><span class="qi">${ic('list')}</span><span><b>${t('qList')}</b><small>${t('qListSub')}</small></span></button>
+      <button class="quick" data-action="go" data-view="settings"><span class="qi">${ic('settings')}</span><span><b>${t('qSettings')}</b><small>${t('qSettingsSub')}</small></span></button>
+    </div>
+  </div>`;
+}
+
+function fld(label,path,o={}){
+  const v=getPath(S.draft,path); let input;
+  if(o.select) input=`<select data-bind="${path}">${o.select.map(([val,lab])=>`<option value="${val}" ${v===val?'selected':''}>${lab}</option>`).join('')}</select>`;
+  else if(o.textarea) input=`<textarea data-bind="${path}">${esc(v)}</textarea>`;
+  else input=`<input data-bind="${path}" type="${o.type||'text'}" value="${esc(v)}" ${o.type==='number'?'min="0" step="any" inputmode="decimal" placeholder="0"':''} ${o.ltr?'dir="ltr"':''}>`;
+  return `<label class="field ${o.full?'full':''}" ${o.id?`id="${o.id}"`:''} ${o.hidden?'style="display:none"':''}><span>${label}${o.req?' <em>*</em>':''}</span>${input}<small class="err" data-err="${path}"></small></label>`;
+}
+async function viewEditor(app){
+  if(!S.draft) S.draft=await newDraft();
+  const d=S.draft, st=S.settings;
+  const curOpts=Object.keys(CUR).map(k=>[k,`${k} - ${S.lang==='ar'?CUR[k].nameAr:CUR[k].nameEn}`]);
+  app.innerHTML=`
+  <div class="page-head"><div><h1>${S.editingId?t('editInvoice'):t('newInvoice')}</h1><p class="muted" style="margin:0"><bdi dir="ltr">${esc(d.number)}</bdi></p></div>
+    <div class="head-actions"><button class="btn ghost" data-action="cancel">${t('cancel')}</button><button class="btn dark" data-action="save">${ic('save')}${t('save')}</button><button class="btn yellow" data-action="save-pdf">${ic('download')}${t('createPdf')}</button></div></div>
+  <div class="mtabs"><button data-tab="form" class="${S.mobileTab==='form'?'on':''}">${t('form')}</button><button data-tab="preview" class="${S.mobileTab==='preview'?'on':''}">${t('preview')}</button></div>
+  <div class="split" data-mtab="${S.mobileTab}">
+    <div class="form-col">
+      <div class="card"><h3><i class="bar"></i>${t('secCompany')}</h3>
+        <div class="co-mini"><img src="${st.logo||DEFAULT_LOGO}" alt=""><div><b>${esc(S.lang==='ar'?st.companyName:(st.companyNameEn||st.companyName))}</b><div class="muted sm"><bdi dir="ltr">${esc([st.phone,st.email].filter(Boolean).join('  |  '))}</bdi></div><a data-action="go" data-view="settings">${t('editInSettings')}</a></div></div>
+      </div>
+      <div class="card"><h3><i class="bar"></i>${t('secClient')}</h3><div class="grid">
+        ${fld(t('clientName'),'client.name',{req:1})}${fld(t('phone'),'client.phone',{req:1,type:'tel',ltr:1})}
+        ${fld(t('email'),'client.email',{type:'email',ltr:1})}${fld(t('city'),'client.city')}
+        ${fld(t('address'),'client.address',{full:1})}
+      </div></div>
+      <div class="card"><h3><i class="bar"></i>${t('secInvoice')}</h3><div class="grid">
+        <label class="field"><span>${t('invNo')}</span><input value="${esc(d.number)}" readonly dir="ltr"></label>
+        ${fld(t('currency'),'currency',{select:curOpts})}
+        ${fld(t('issueDate'),'issueDate',{type:'date',req:1})}${fld(t('dueDate'),'dueDate',{type:'date'})}
+        ${fld(t('status'),'status',{select:['unpaid','partial','paid'].map(s=>[s,t('st_'+s)])})}
+        ${fld(t('paidAmount'),'paidAmount',{type:'number',id:'paidWrap',hidden:d.status!=='partial'})}
+      </div></div>
+      <div class="card"><h3><i class="bar"></i>${t('secItems')}</h3>
+        <div id="items"></div><small class="err" id="itemsErr"></small>
+        <button class="add-item" data-action="add-item">${ic('plus')}${t('addItem')}</button>
+      </div>
+      <div class="card"><h3><i class="bar"></i>${t('secFees')}</h3>
+        <div class="grid g3 fees">${['shipping','service','delivery','customs','other','discount'].map(k=>fld(t(k),'fees.'+k,{type:'number'})).join('')}</div>
+        <div class="sumbox" id="sumbox"></div>
+      </div>
+      <div class="card"><h3><i class="bar"></i>${t('secNotes')}</h3><div class="grid">
+        ${fld(t('notes'),'notes',{textarea:1,full:1})}${fld(t('terms'),'terms',{textarea:1,full:1})}
+      </div></div>
+    </div>
+    <div class="preview-col"><div class="sticky">
+      <div class="preview-label"><span class="live"></span>${t('livePreview')}</div>
+      <div class="preview-wrap"><div class="a4-scale" id="a4Scale"></div></div>
+    </div></div>
+  </div>`;
+  renderItems(); updatePreview();
+}
+function renderItems(){
+  $('#items').innerHTML=S.draft.items.map((it,i)=>`<div class="item">
+    <span class="no">${i+1}</span>
+    <label class="mini a-name"><span>${t('item')} <em>*</em></span><input data-item="${i}" data-f="name" value="${esc(it.name)}" placeholder="${t('itemPh')}"></label>
+    <label class="mini a-desc"><span>${t('desc')}</span><input data-item="${i}" data-f="desc" value="${esc(it.desc)}"></label>
+    <label class="mini a-qty"><span>${t('qty')}</span><input data-item="${i}" data-f="qty" type="number" min="0" step="any" inputmode="decimal" value="${esc(it.qty)}"></label>
+    <label class="mini a-price"><span>${t('unitPrice')}</span><input data-item="${i}" data-f="price" type="number" min="0" step="any" inputmode="decimal" value="${esc(it.price)}" placeholder="0"></label>
+    <div class="mini a-total"><span>${t('lineTotal')}</span><div class="line-total" data-line="${i}">${fmt(r2(num(it.qty)*num(it.price)))}</div></div>
+    <button class="icon-btn del a-del" data-action="del-item" data-i="${i}" title="${t('actDelete')}" aria-label="${t('actDelete')}">${ic('trash')}</button>
+  </div>`).join('');
+}
+let pvRaf;
+function updatePreview(){
+  cancelAnimationFrame(pvRaf);
+  pvRaf=requestAnimationFrame(()=>{
+    const s=$('#a4Scale'); if(!s) return;
+    s.innerHTML=renderInvoice(S.draft,S.settings,S.lang); fitPreview();
+    const c=calc(S.draft), cur=S.draft.currency, sb=$('#sumbox');
+    if(sb) sb.innerHTML=`<div class="r"><span>${t('subtotal')}</span><b>${money(c.sub,cur)}</b></div><div class="r"><span>${t('secFees')}</span><b>${money(c.fees,cur)}</b></div><div class="r"><span>${t('discount')}</span><b><bdi dir="ltr">-${fmt(c.discount)}</bdi></b></div>
+      <div class="g"><span>${t('grandTotal')}</span><b>${money(c.total,cur)}</b></div>`;
+  });
+}
+function flagErr(path,msg){const i=$(`[data-bind="${path}"]`);if(i)i.classList.add('invalid');const e=$(`[data-err="${path}"]`);if(e)e.textContent=msg}
+function clearErr(path){const i=$(`[data-bind="${path}"]`);if(i)i.classList.remove('invalid');const e=$(`[data-err="${path}"]`);if(e)e.textContent=''}
+function validate(){
+  const d=S.draft; let bad=false;
+  $$('.invalid').forEach(x=>x.classList.remove('invalid')); $$('[data-err]').forEach(x=>x.textContent=''); $('#itemsErr').textContent='';
+  ['client.name','client.phone','issueDate'].forEach(p=>{if(!String(getPath(d,p)||'').trim()){flagErr(p,t('required'));bad=true}});
+  if(d.client.email&&!/^\S+@\S+\.\S+$/.test(d.client.email)){flagErr('client.email',t('badEmail'));bad=true}
+  if(d.dueDate&&d.issueDate&&d.dueDate<d.issueDate){flagErr('dueDate',t('dueBefore'));bad=true}
+  d.items.forEach((it,i)=>{ if(!isFilled(it)) return;
+    if(!String(it.name||'').trim()){$(`[data-item="${i}"][data-f="name"]`).classList.add('invalid');bad=true}
+    if(!(num(it.qty)>0)){$(`[data-item="${i}"][data-f="qty"]`).classList.add('invalid');bad=true} });
+  if(!d.items.some(it=>String(it.name||'').trim()&&num(it.qty)>0)){$('#itemsErr').textContent=t('needItem');bad=true}
+  if(d.status==='partial'){const c=calc(d);if(!(num(d.paidAmount)>0&&num(d.paidAmount)<c.total)){flagErr('paidAmount',t('badPaid'));bad=true}}
+  if(bad){
+    toast(t('fixErrors'),'err');
+    if(S.mobileTab==='preview'){S.mobileTab='form';$('.split').dataset.mtab='form';$$('.mtabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab==='form'))}
+    const first=$('.invalid')||$('#itemsErr'); first?.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  return !bad;
+}
+async function saveDraft(){
+  if(!validate()) return null;
+  const d=S.draft, now=new Date().toISOString();
+  d.items=d.items.filter(isFilled);
+  if(d.status!=='partial') d.paidAmount='';
+  if(!S.editingId){d.number=await Repo.nextNumber(false);d.id=uid();d.createdAt=now}
+  d.updatedAt=now;
+  await Repo.saveInvoice(d); S.editingId=d.id;
+  return structuredClone(d);
+}
+
+async function viewList(app){
+  S.cache=await Repo.listInvoices(); const f=S.filters;
+  app.innerHTML=`${memBanner()}<div class="page-head"><div><h1>${t('navList')}</h1><p class="muted" id="countLbl" style="margin:0"></p></div><button class="btn yellow" data-action="new">${ic('plus')}${t('createNew')}</button></div>
+  <div class="card"><div class="filters">
+    <label class="field"><span>${t('searchLbl')}</span><div class="search">${ic('search')}<input data-filter="q" value="${esc(f.q)}" placeholder="${t('search')}"></div></label>
+    <label class="field"><span>${t('status')}</span><select data-filter="status"><option value="">${t('allStatus')}</option>${['unpaid','partial','paid'].map(s=>`<option value="${s}" ${f.status===s?'selected':''}>${t('st_'+s)}</option>`).join('')}</select></label>
+    <label class="field"><span>${t('from')}</span><input type="date" data-filter="from" value="${f.from}"></label>
+    <label class="field"><span>${t('to')}</span><input type="date" data-filter="to" value="${f.to}"></label>
+    <button class="btn ghost" data-action="clear-filters">${t('clear')}</button>
+  </div></div>
+  <div class="card" id="listBody"></div>`;
+  renderListRows();
+}
+function renderListRows(){
+  const f=S.filters,q=f.q.trim().toLowerCase();
+  const l=S.cache.filter(i=>(!q||[i.number,i.client.name,i.client.phone].some(v=>String(v||'').toLowerCase().includes(q)))&&(!f.status||i.status===f.status)&&(!f.from||i.issueDate>=f.from)&&(!f.to||i.issueDate<=f.to));
+  $('#listBody').innerHTML=invoiceTable(l,false,S.cache.length?t('noResults'):'');
+  $('#countLbl').textContent=`${l.length} ${t('results')}`;
+}
+
+async function viewInvoice(app){
+  const inv=await Repo.getInvoice(S.invoiceId); if(!inv) return navigate('list');
+  const tools=[['view','eye','actPreview'],['pdf','download','actPdf','yellow'],['print','printer','actPrint'],['share','share','actShare'],['edit','edit','actEdit'],['dup','copy','actDup'],['del','trash','actDelete','danger-ghost']];
+  app.innerHTML=`<div class="page-head"><div><button class="back" data-action="go" data-view="list">${ic('back','flip')}${t('back')}</button><h1><bdi dir="ltr">${esc(inv.number)}</bdi></h1><p class="muted row" style="margin:4px 0 0">${esc(inv.client.name)}<span>|</span>${fmtDate(inv.issueDate)}<span>|</span><b style="color:#000">${money(calc(inv).total,inv.currency)}</b>${badge(inv.status)}</p></div></div>
+  <div class="card toolbar">${tools.map(([a,i,l,c=''])=>`<button class="btn ${c}" data-action="${a==='view'?'preview':a}" data-id="${inv.id}">${ic(i)}${t(l)}</button>`).join('')}</div>
+  <div class="inv-page"><div class="preview-wrap"><div class="a4-scale">${renderInvoice(inv,S.settings,S.lang)}</div></div></div>`;
+  fitPreview(); waitImages(app).then(fitPreview);
+}
+
+async function viewSettings(app){
+  if(!S.settingsDraft) S.settingsDraft=structuredClone(S.settings);
+  const d=S.settingsDraft, next=await Repo.nextNumber(true);
+  const f=(key,label,o={})=>`<label class="field ${o.full?'full':''}"><span>${label}</span>${o.textarea?`<textarea data-set="${key}">${esc(d[key])}</textarea>`:`<input data-set="${key}" type="${o.type||'text'}" value="${esc(d[key])}" ${o.type==='number'?`min="${o.min??0}" step="1"`:''} ${o.ltr?'dir="ltr"':''}>`}</label>`;
+  const up=(key,label,hint)=>`<div class="upload"><div class="thumb">${d[key]?`<img src="${d[key]}" alt="">`:ic('upload')}</div><div class="upload-info"><b>${label}</b><small class="muted">${hint}</small><div class="row">
+    <label class="btn sm">${ic('upload')}${t('upload')}<input type="file" accept="image/png,image/jpeg,image/webp" data-upload="${key}" hidden></label>
+    ${key==='logo'?(d.logo!==DEFAULT_LOGO?`<button class="btn sm ghost" data-action="remove-asset" data-key="logo">${t('resetLogo')}</button>`:''):(d[key]?`<button class="btn sm ghost" data-action="remove-asset" data-key="${key}">${t('remove')}</button>`:'')}
+  </div></div></div>`;
+  app.innerHTML=`${memBanner()}<div class="page-head"><h1>${t('settingsTitle')}</h1><button class="btn yellow" data-action="save-settings">${ic('save')}${t('saveSettings')}</button></div>
+  <div class="card"><h3><i class="bar"></i>${t('secCompany')}</h3><div class="grid">
+    ${f('companyName',t('companyName'))}${f('companyNameEn',t('companyNameEn'),{ltr:1})}
+    ${f('phone',t('phone'),{ltr:1})}${f('email',t('email'),{ltr:1})}
+    ${f('website',t('website'),{ltr:1})}${f('taxNumber',t('taxNumber'))}
+    ${f('address',t('address'),{full:1})}
+  </div></div>
+  <div class="card"><h3><i class="bar"></i>${t('secBrand')}</h3><div class="uploads">
+    ${up('logo',t('logo'),t('logoHint'))}${up('signature',t('signature'),t('pngHint'))}${up('stamp',t('stamp'),t('pngHint'))}
+  </div></div>
+  <div class="card"><h3><i class="bar"></i>${t('secInvSettings')}</h3><div class="grid">
+    <label class="field"><span>${t('defCurrency')}</span><select data-set="currency">${Object.keys(CUR).map(k=>`<option value="${k}" ${d.currency===k?'selected':''}>${k} - ${S.lang==='ar'?CUR[k].nameAr:CUR[k].nameEn}</option>`).join('')}</select></label>
+    ${f('dueDays',t('dueDays'),{type:'number'})}
+    ${f('startNumber',t('startNumber'),{type:'number',min:1})}
+    <div class="field" style="justify-content:flex-end"><span>${t('nextNo')}</span><div><span class="next-no">${next}</span></div></div>
+    ${f('footerText',t('footerText'))}${f('footerTextEn',t('footerTextEn'),{ltr:1})}
+    ${f('terms',t('defTerms'),{textarea:1,full:1})}
+  </div></div>
+  <div class="row end"><button class="btn yellow lg" data-action="save-settings">${ic('save')}${t('saveSettings')}</button></div>`;
+}
+
+/* ---------------- Events ---------------- */
+function onKey(e){ if(e.target.type==='number'&&['-','e','E','+'].includes(e.key)) e.preventDefault(); }
+function onInput(e){
+  const el=e.target;
+  if(S.view==='editor'){
+    if(el.dataset.bind){
+      let v=el.value; const p=el.dataset.bind;
+      if(el.type==='number'&&parseFloat(v)<0){el.value='';v='';flagErr(p,t('noNegative'))} else clearErr(p);
+      setPath(S.draft,p,v);
+      if(p==='status'){const w=$('#paidWrap');if(w)w.style.display=v==='partial'?'':'none'}
+      updatePreview();
+    } else if(el.dataset.item!==undefined){
+      const i=+el.dataset.item; let v=el.value;
+      if(el.type==='number'&&parseFloat(v)<0){el.value='';v='';toast(t('noNegative'),'err')}
+      S.draft.items[i][el.dataset.f]=v; el.classList.remove('invalid'); $('#itemsErr').textContent='';
+      const lt=$(`[data-line="${i}"]`); if(lt) lt.textContent=fmt(r2(num(S.draft.items[i].qty)*num(S.draft.items[i].price)));
+      updatePreview();
+    }
+  }
+  if(S.view==='list'&&el.dataset.filter){S.filters[el.dataset.filter]=el.value;renderListRows()}
+  if(S.view==='settings'&&el.dataset.set){S.settingsDraft[el.dataset.set]=el.value}
+}
+async function onChange(e){
+  const el=e.target; if(!el.dataset.upload) return;
+  const file=el.files[0]; if(!file) return;
+  if(!file.type.startsWith('image/')) return toast(t('badImage'),'err');
+  if(file.size>3*1024*1024) return toast(t('tooBig'),'err');
+  S.settingsDraft[el.dataset.upload]=await readFile(file);
+  await render();
+  toast(el.dataset.upload!=='logo'&&file.type!=='image/png'?t('pngTip'):t('uploaded'));
+}
+async function onClick(e){
+  const tab=e.target.closest('[data-tab]');
+  if(tab){S.mobileTab=tab.dataset.tab;$$('.mtabs button').forEach(b=>b.classList.toggle('on',b===tab));$('.split').dataset.mtab=S.mobileTab;fitPreview();return}
+  const a=e.target.closest('[data-action]'); if(!a) return;
+  const id=a.dataset.id;
+  switch(a.dataset.action){
+    case 'go': navigate(a.dataset.view); break;
+    case 'new': S.draft=await newDraft(); S.editingId=null; S.mobileTab='form'; navigate('editor'); break;
+    case 'add-item': S.draft.items.push({name:'',desc:'',qty:1,price:''}); renderItems(); updatePreview(); $$('[data-f="name"]').pop()?.focus(); break;
+    case 'del-item': if(S.draft.items.length===1) S.draft.items[0]={name:'',desc:'',qty:1,price:''}; else S.draft.items.splice(+a.dataset.i,1); renderItems(); updatePreview(); break;
+    case 'cancel': S.editingId?navigate('invoice',{invoiceId:S.editingId}):navigate('dashboard'); break;
+    case 'save': { const inv=await saveDraft(); if(inv){toast(t('saved'));navigate('invoice',{invoiceId:inv.id})} break; }
+    case 'save-pdf': { const inv=await saveDraft(); if(inv){toast(t('saved'));await downloadPdf(inv);navigate('invoice',{invoiceId:inv.id})} break; }
+    case 'view': navigate('invoice',{invoiceId:id}); break;
+    case 'preview': { const inv=await Repo.getInvoice(id); inv&&openPreview(inv); break; }
+    case 'pdf': { const inv=await Repo.getInvoice(id); inv&&downloadPdf(inv); break; }
+    case 'print': { const inv=await Repo.getInvoice(id); inv&&printInvoice(inv); break; }
+    case 'share': { const inv=await Repo.getInvoice(id); inv&&shareInvoice(inv); break; }
+    case 'edit': { const inv=await Repo.getInvoice(id); if(inv){S.draft=inv;S.editingId=inv.id;S.mobileTab='form';navigate('editor')} break; }
+    case 'dup': { const inv=await Repo.getInvoice(id); if(!inv)break;
+      Object.assign(inv,{id:null,number:await Repo.nextNumber(true),issueDate:todayISO(),dueDate:todayISO(+S.settings.dueDays||0),status:'unpaid',paidAmount:'',createdAt:null,updatedAt:null});
+      S.draft=inv; S.editingId=null; S.mobileTab='form'; navigate('editor'); toast(t('duplicated')); break; }
+    case 'del': { const inv=await Repo.getInvoice(id); if(!inv)break;
+      if(await confirmBox(`${t('confirmDel')} <b><bdi dir="ltr">${esc(inv.number)}</bdi></b>`)){await Repo.deleteInvoice(id);toast(t('deleted'));S.view==='invoice'?navigate('list'):render()} break; }
+    case 'clear-filters': S.filters={q:'',status:'',from:'',to:''}; render(); break;
+    case 'lang': S.lang=S.lang==='ar'?'en':'ar'; Repo.adapter.setMeta('lang',S.lang); render(); break;
+    case 'remove-asset': S.settingsDraft[a.dataset.key]=a.dataset.key==='logo'?DEFAULT_LOGO:''; render(); break;
+    case 'save-settings': {
+      const d=S.settingsDraft, sn=Number(d.startNumber);
+      if(!String(d.companyName||'').trim()) return toast(t('companyReq'),'err');
+      if(!Number.isInteger(sn)||sn<1) return toast(t('badStart'),'err');
+      d.startNumber=sn; d.dueDays=Math.max(0,parseInt(d.dueDays)||0);
+      S.settings=structuredClone(d); await Repo.saveSettings(S.settings);
+      toast(t('settingsSaved')); render(); break; }
+  }
+}
+
+async function init(){
+  await Repo.init();
+  S.settings=await Repo.getSettings();
+  S.lang=(await Repo.adapter.getMeta('lang'))||'ar';
+  const app=$('#app');
+  app.addEventListener('input',onInput); app.addEventListener('click',onClick);
+  app.addEventListener('change',onChange); app.addEventListener('keydown',onKey);
+  $('#topbar').addEventListener('click',onClick);
+  window.addEventListener('resize',fitPreview);
+  if(document.fonts) document.fonts.ready.then(fitPreview);
+  render();
+}
+init();
+</script>
+</body>
+</html>
