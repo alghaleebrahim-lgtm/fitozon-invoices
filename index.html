@@ -184,6 +184,17 @@ table.tbl{width:100%;border-collapse:collapse;min-width:720px}
 #print-root{display:none}
 #pdf-stage{position:fixed;top:0;left:0;z-index:-10;pointer-events:none}
 
+/* Login & loading */
+.login{min-height:calc(100vh - 130px);display:grid;place-items:center}
+.login-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px}
+.login-card img{width:64px;height:64px;border-radius:14px}
+.login-card h1{font-size:22px}
+.login-card p{margin:-8px 0 4px}
+.loading{padding:80px 0;display:grid;place-items:center;color:var(--muted)}
+.loading .spinner{border-color:#DDD;border-top-color:#000}
+.logout{background:transparent;border:0;color:#B8B8B0;cursor:pointer;display:flex;gap:6px;align-items:center;padding:7px 8px;border-radius:9px}
+.logout:hover{color:#fff;background:#1A1A1A}
+
 /* Responsive */
 @media(max-width:1100px){.dash-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.uploads{grid-template-columns:1fr}.filters{grid-template-columns:1fr 1fr}.filters .field:first-child{grid-column:1/-1}}
 @media(max-width:1024px){
@@ -277,6 +288,7 @@ table.tbl{width:100%;border-collapse:collapse;min-width:720px}
 <div id="pdf-stage"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 /* =========================================================
    نظام فواتير أعمال فيتوزون التجارية
@@ -313,6 +325,7 @@ secBrand:'الهوية',logo:'الشعار',signature:'التوقيع الإلك
 secInvSettings:'إعدادات الفاتورة',defCurrency:'العملة الافتراضية',startNumber:'بداية ترقيم الفواتير',dueDays:'مدة الاستحقاق الافتراضية (أيام)',footerText:'نص أسفل الفاتورة (عربي)',footerTextEn:'نص أسفل الفاتورة (English)',defTerms:'الشروط والأحكام الافتراضية',nextNo:'رقم الفاتورة القادمة:',
 saveSettings:'حفظ الإعدادات',settingsSaved:'تم حفظ الإعدادات',badStart:'بداية الترقيم يجب أن تكون رقماً صحيحاً من 1 فأكثر',companyReq:'اسم الشركة مطلوب',badImage:'الملف المختار ليس صورة',tooBig:'حجم الصورة أكبر من 3MB',uploaded:'تم رفع الصورة، اضغط حفظ الإعدادات',pngTip:'يُفضَّل PNG شفاف للتوقيع والختم',
 generating:'جاري إنشاء ملف PDF...',pdfReady:'ملف PDF جاهز',download:'تحميل',shareNow:'مشاركة الآن',shareUnsupported:'المشاركة المباشرة غير مدعومة في هذا المتصفح. حمّل الملف وأرسله يدوياً.',pdfErr:'تعذّر إنشاء PDF. استخدم زر الطباعة ثم اختر حفظ كـ PDF.',
+loginTitle:'تسجيل الدخول',loginSub:'نظام فواتير أعمال فيتوزون التجارية',password:'كلمة السر',login:'دخول',badLogin:'الإيميل أو كلمة السر غير صحيحة',logout:'خروج',exportBtn:'تصدير نسخة احتياطية',exported:'تم تحميل النسخة الاحتياطية',netErr:'تعذّر الاتصال بقاعدة البيانات. تأكد من الإنترنت وحاول مرة أخرى.',libErr:'تعذّر تحميل النظام. تأكد من اتصال الإنترنت ثم حدّث الصفحة.',loading:'جاري التحميل...',
 memWarn:'التخزين الدائم غير متاح في هذه البيئة، وستُفقد الفواتير عند إغلاق الصفحة. افتح الملف مباشرة في المتصفح لحفظ البيانات.'},
 en:{appName:'Fitozon Invoicing',appSub:'Fitozon Business Trading',navHome:'Dashboard',navNew:'New invoice',navList:'Invoices',navSettings:'Settings',langBtn:'العربية',
 heroTitle:'Fitozon invoices, ready to print and send',heroSub:'Enter the client, items and fees. The system calculates totals and prepares the PDF.',createNew:'Create new invoice',
@@ -337,6 +350,7 @@ secBrand:'Brand',logo:'Logo',signature:'E-signature',stamp:'Company stamp',pngHi
 secInvSettings:'Invoice defaults',defCurrency:'Default currency',startNumber:'Invoice numbering starts at',dueDays:'Default payment term (days)',footerText:'Footer text (Arabic)',footerTextEn:'Footer text (English)',defTerms:'Default terms & conditions',nextNo:'Next invoice number:',
 saveSettings:'Save settings',settingsSaved:'Settings saved',badStart:'Numbering start must be a whole number of 1 or more',companyReq:'Company name is required',badImage:'The selected file is not an image',tooBig:'Image is larger than 3MB',uploaded:'Image uploaded. Click Save settings',pngTip:'Transparent PNG is recommended for signature and stamp',
 generating:'Creating PDF...',pdfReady:'PDF is ready',download:'Download',shareNow:'Share now',shareUnsupported:'Direct sharing is not supported in this browser. Download the file and send it manually.',pdfErr:'Could not create the PDF. Use Print and choose Save as PDF.',
+loginTitle:'Sign in',loginSub:'Fitozon Business Trading invoicing',password:'Password',login:'Sign in',badLogin:'Incorrect email or password',logout:'Sign out',exportBtn:'Export backup',exported:'Backup downloaded',netErr:'Could not reach the database. Check your connection and try again.',libErr:'The system could not load. Check your internet connection and refresh the page.',loading:'Loading...',
 memWarn:'Persistent storage is unavailable here; invoices will be lost when the page closes. Open the file directly in your browser to keep data.'}
 };
 const CUR = {
@@ -355,53 +369,41 @@ const DEFAULT_SETTINGS = {
   terms:'الأسعار تشمل الرسوم الموضحة في الفاتورة.\nيتم تنفيذ الطلب بعد تأكيد الدفع.'
 };
 
-/* ---------------- Storage adapters ---------------- */
-const IDBAdapter = {
-  db:null,
-  init(){ return new Promise((res,rej)=>{ const r=indexedDB.open('fitozon_invoices',1);
-    r.onupgradeneeded=()=>{const d=r.result; d.createObjectStore('invoices',{keyPath:'id'}); d.createObjectStore('meta',{keyPath:'key'});};
-    r.onsuccess=()=>{this.db=r.result;res()}; r.onerror=()=>rej(r.error); }); },
-  store(n,m){return this.db.transaction(n,m).objectStore(n)},
-  req(r){return new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
-  async getMeta(k){const v=await this.req(this.store('meta','readonly').get(k));return v?v.value:null},
-  setMeta(k,value){return this.req(this.store('meta','readwrite').put({key:k,value}))},
-  listInvoices(){return this.req(this.store('invoices','readonly').getAll())},
-  saveInvoice(inv){return this.req(this.store('invoices','readwrite').put(inv))},
-  deleteInvoice(id){return this.req(this.store('invoices','readwrite').delete(id))}
-};
-const MemoryAdapter = {
-  meta:{}, inv:{},
-  async init(){}, async getMeta(k){return this.meta[k]??null}, async setMeta(k,v){this.meta[k]=v},
-  async listInvoices(){return Object.values(this.inv).map(x=>structuredClone(x))},
-  async saveInvoice(i){this.inv[i.id]=structuredClone(i)}, async deleteInvoice(id){delete this.inv[id]}
-};
+/* ---------------- Supabase config ---------------- */
+const SUPABASE_URL = 'https://sdzchtzojcivowqfjyxi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_-sKpCgVQqu0eBu--LJzj5Q_MsLVdeRO';
+let sb = null;
 
-/* ---------------- Repository ---------------- */
+/* ---------------- Repository (Supabase) ---------------- */
 const Repo = {
-  adapter:null, persistent:true,
-  async init(){
-    try{ if(!window.indexedDB) throw 0; await IDBAdapter.init(); await IDBAdapter.getMeta('ping'); this.adapter=IDBAdapter; }
-    catch(e){ this.adapter=MemoryAdapter; this.persistent=false; }
+  persistent:true,
+  init(){
+    if(!window.supabase) throw new Error('supabase-js not loaded');
+    sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
   },
-  async getSettings(){ return {...DEFAULT_SETTINGS, ...((await this.adapter.getMeta('settings'))||{})}; },
-  saveSettings(s){ return this.adapter.setMeta('settings',s); },
-  async listInvoices(){ const l=await this.adapter.listInvoices(); return l.sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))); },
-  async getInvoice(id){ return (await this.adapter.listInvoices()).find(i=>i.id===id)||null; },
-  saveInvoice(i){ return this.adapter.saveInvoice(structuredClone(i)); },
-  deleteInvoice(id){ return this.adapter.deleteInvoice(id); },
+  ok(r){ if(r.error) throw r.error; return r.data; },
+  async getMeta(k){ const d=this.ok(await sb.from('app_meta').select('value').eq('key',k).maybeSingle()); return d?d.value:null; },
+  async setMeta(k,v){ this.ok(await sb.from('app_meta').upsert({key:k,value:v})); },
+  async getSettings(){ return {...DEFAULT_SETTINGS, ...((await this.getMeta('settings'))||{})}; },
+  saveSettings(s){ return this.setMeta('settings',s); },
+  async listInvoices(){ return this.ok(await sb.from('invoices').select('data').order('created_at',{ascending:false})).map(r=>r.data); },
+  async getInvoice(id){ const d=this.ok(await sb.from('invoices').select('data').eq('id',id).maybeSingle()); return d?d.data:null; },
+  async saveInvoice(inv){ this.ok(await sb.from('invoices').upsert({id:inv.id,number:inv.number,data:inv,updated_at:new Date().toISOString()})); },
+  async deleteInvoice(id){ this.ok(await sb.from('invoices').delete().eq('id',id)); },
   async nextNumber(peek){
-    const year=new Date().getFullYear();
-    const counters=(await this.adapter.getMeta('counters'))||{};
-    const s=await this.getSettings();
-    const seq=Math.max(counters[year]||0,(parseInt(s.startNumber)||1)-1)+1;
-    if(!peek){counters[year]=seq; await this.adapter.setMeta('counters',counters);}
-    return `FTZ-INV-${year}-${String(seq).padStart(6,'0')}`;
+    const year=new Date().getFullYear(), start=parseInt(S.settings?.startNumber)||1;
+    if(!peek) return this.ok(await sb.rpc('next_invoice_number',{start_at:start}));   // atomic, server-side
+    const d=this.ok(await sb.from('invoices').select('number').like('number',`FTZ-INV-${year}-%`).order('number',{ascending:false}).limit(1));
+    const last=d.length?parseInt(d[0].number.split('-').pop())||0:0;
+    return `FTZ-INV-${year}-${String(Math.max(last+1,start)).padStart(6,'0')}`;
   }
 };
+const localGet=k=>{try{return localStorage.getItem('ftz_'+k)}catch(e){return null}};
+const localSet=(k,v)=>{try{localStorage.setItem('ftz_'+k,v)}catch(e){}};
 
 /* ---------------- Helpers ---------------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const S={lang:'ar',view:'dashboard',settings:null,settingsDraft:null,draft:null,editingId:null,invoiceId:null,mobileTab:'form',filters:{q:'',status:'',from:'',to:''},cache:[]};
+const S={user:null,lang:'ar',view:'dashboard',settings:null,settingsDraft:null,draft:null,editingId:null,invoiceId:null,mobileTab:'form',filters:{q:'',status:'',from:'',to:''},cache:[]};
 const t=k=>(T[S.lang][k]??k);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
@@ -418,7 +420,7 @@ const getPath=(o,p)=>p.split('.').reduce((a,k)=>a?.[k],o);
 const setPath=(o,p,v)=>{const ks=p.split('.');const last=ks.pop();ks.reduce((a,k)=>a[k],o)[last]=v};
 const badge=s=>`<span class="badge b-${s}">${t('st_'+s)}</span>`;
 const fileName=inv=>`Fitozon-Invoice-${inv.number}.pdf`;
-const ICONS={plus:'<path d="M12 5v14M5 12h14"/>',home:'<path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',settings:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',printer:'<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/>',calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',back:'<path d="M15 18l-6-6 6-6"/>'};
+const ICONS={plus:'<path d="M12 5v14M5 12h14"/>',home:'<path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/>',list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',settings:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',printer:'<path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>',file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>',cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/>',calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',back:'<path d="M15 18l-6-6 6-6"/>',logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'};
 const ic=(n,cls='')=>`<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
 
 function toast(msg,type='ok'){const el=document.createElement('div');el.className='t '+type;el.textContent=msg;$('#toast').appendChild(el);setTimeout(()=>el.remove(),3200)}
@@ -582,13 +584,17 @@ async function render(){
   document.title=S.lang==='ar'?'نظام فواتير أعمال فيتوزون التجارية':'Fitozon Business Trading Invoicing';
   renderTopbar();
   const app=$('#app'); app.classList.remove('enter'); void app.offsetWidth; app.classList.add('enter');
-  await ({dashboard:viewDashboard,editor:viewEditor,list:viewList,settings:viewSettings,invoice:viewInvoice})[S.view](app);
+  if(['dashboard','list','invoice'].includes(S.view)) app.innerHTML=`<div class="loading"><div><div class="spinner"></div>${t('loading')}</div></div>`;
+  try{
+  await ({login:viewLogin,dashboard:viewDashboard,editor:viewEditor,list:viewList,settings:viewSettings,invoice:viewInvoice})[S.view](app);
+  }catch(err){ console.error(err); app.innerHTML=`<div class="empty">${ic('x')}<p>${t('netErr')}</p><button class="btn dark" onclick="render()">${t('loading').replace('...','')}</button></div>`; }
 }
 function renderTopbar(){
+  if(!S.user){ $('#topbar').innerHTML=`<div class="brand"><img src="${DEFAULT_LOGO}" alt="Fitozon"><div>${t('appName')}<small>${t('appSub')}</small></div></div><button class="lang" style="margin-inline-start:auto" data-action="lang">${ic('globe')}${t('langBtn')}</button>`; return; }
   const on=S.view==='editor'?(S.editingId?'list':'new'):S.view==='invoice'?'list':S.view;
-  $('#topbar').innerHTML=`<div class="brand"><img src="${S.settings.logo||DEFAULT_LOGO}" alt="Fitozon"><div>${t('appName')}<small>${t('appSub')}</small></div></div>
+  $('#topbar').innerHTML=`<div class="brand"><img src="${S.settings?.logo||DEFAULT_LOGO}" alt="Fitozon"><div>${t('appName')}<small>${t('appSub')}</small></div></div>
   <nav class="nav">${[['dashboard','home','navHome'],['new','plus','navNew'],['list','list','navList'],['settings','settings','navSettings']].map(([v,i,l])=>`<button class="${on===v?'on':''}" ${v==='new'?'data-action="new"':`data-action="go" data-view="${v}"`}>${ic(i)}${t(l)}</button>`).join('')}</nav>
-  <button class="lang" data-action="lang">${ic('globe')}${t('langBtn')}</button>`;
+  <button class="lang" data-action="lang">${ic('globe')}${t('langBtn')}</button><button class="logout" data-action="logout" title="${esc(S.user.email)}">${ic('logout')}${t('logout')}</button>`;
 }
 const memBanner=()=>Repo.persistent?'':`<div class="banner">${t('memWarn')}</div>`;
 const ACT={view:['eye','actPreview'],pdf:['download','actPdf'],print:['printer','actPrint'],edit:['edit','actEdit'],dup:['copy','actDup'],share:['share','actShare'],del:['trash','actDelete']};
@@ -728,7 +734,7 @@ async function saveDraft(){
 
 async function viewList(app){
   S.cache=await Repo.listInvoices(); const f=S.filters;
-  app.innerHTML=`${memBanner()}<div class="page-head"><div><h1>${t('navList')}</h1><p class="muted" id="countLbl" style="margin:0"></p></div><button class="btn yellow" data-action="new">${ic('plus')}${t('createNew')}</button></div>
+  app.innerHTML=`${memBanner()}<div class="page-head"><div><h1>${t('navList')}</h1><p class="muted" id="countLbl" style="margin:0"></p></div><div class="head-actions"><button class="btn" data-action="export">${ic('download')}${t('exportBtn')}</button><button class="btn yellow" data-action="new">${ic('plus')}${t('createNew')}</button></div></div>
   <div class="card"><div class="filters">
     <label class="field"><span>${t('searchLbl')}</span><div class="search">${ic('search')}<input data-filter="q" value="${esc(f.q)}" placeholder="${t('search')}"></div></label>
     <label class="field"><span>${t('status')}</span><select data-filter="status"><option value="">${t('allStatus')}</option>${['unpaid','partial','paid'].map(s=>`<option value="${s}" ${f.status===s?'selected':''}>${t('st_'+s)}</option>`).join('')}</select></label>
@@ -763,7 +769,7 @@ async function viewSettings(app){
     <label class="btn sm">${ic('upload')}${t('upload')}<input type="file" accept="image/png,image/jpeg,image/webp" data-upload="${key}" hidden></label>
     ${key==='logo'?(d.logo!==DEFAULT_LOGO?`<button class="btn sm ghost" data-action="remove-asset" data-key="logo">${t('resetLogo')}</button>`:''):(d[key]?`<button class="btn sm ghost" data-action="remove-asset" data-key="${key}">${t('remove')}</button>`:'')}
   </div></div></div>`;
-  app.innerHTML=`${memBanner()}<div class="page-head"><h1>${t('settingsTitle')}</h1><button class="btn yellow" data-action="save-settings">${ic('save')}${t('saveSettings')}</button></div>
+  app.innerHTML=`${memBanner()}<div class="page-head"><h1>${t('settingsTitle')}</h1><div class="head-actions"><button class="btn" data-action="export">${ic('download')}${t('exportBtn')}</button><button class="btn yellow" data-action="save-settings">${ic('save')}${t('saveSettings')}</button></div></div>
   <div class="card"><h3><i class="bar"></i>${t('secCompany')}</h3><div class="grid">
     ${f('companyName',t('companyName'))}${f('companyNameEn',t('companyNameEn'),{ltr:1})}
     ${f('phone',t('phone'),{ltr:1})}${f('email',t('email'),{ltr:1})}
@@ -811,11 +817,15 @@ async function onChange(e){
   const file=el.files[0]; if(!file) return;
   if(!file.type.startsWith('image/')) return toast(t('badImage'),'err');
   if(file.size>3*1024*1024) return toast(t('tooBig'),'err');
-  S.settingsDraft[el.dataset.upload]=await readFile(file);
+  S.settingsDraft[el.dataset.upload]=await resizeImage(await readFile(file));
   await render();
   toast(el.dataset.upload!=='logo'&&file.type!=='image/png'?t('pngTip'):t('uploaded'));
 }
 async function onClick(e){
+  try{ await handleClick(e); }
+  catch(err){ console.error(err); busy(false); toast(t('netErr'),'err'); }
+}
+async function handleClick(e){
   const tab=e.target.closest('[data-tab]');
   if(tab){S.mobileTab=tab.dataset.tab;$$('.mtabs button').forEach(b=>b.classList.toggle('on',b===tab));$('.split').dataset.mtab=S.mobileTab;fitPreview();return}
   const a=e.target.closest('[data-action]'); if(!a) return;
@@ -840,7 +850,9 @@ async function onClick(e){
     case 'del': { const inv=await Repo.getInvoice(id); if(!inv)break;
       if(await confirmBox(`${t('confirmDel')} <b><bdi dir="ltr">${esc(inv.number)}</bdi></b>`)){await Repo.deleteInvoice(id);toast(t('deleted'));S.view==='invoice'?navigate('list'):render()} break; }
     case 'clear-filters': S.filters={q:'',status:'',from:'',to:''}; render(); break;
-    case 'lang': S.lang=S.lang==='ar'?'en':'ar'; Repo.adapter.setMeta('lang',S.lang); render(); break;
+    case 'lang': S.lang=S.lang==='ar'?'en':'ar'; localSet('lang',S.lang); render(); break;
+    case 'logout': await sb.auth.signOut(); S.user=null; S.settings=null; S.draft=null; navigate('login'); break;
+    case 'export': await exportData(); break;
     case 'remove-asset': S.settingsDraft[a.dataset.key]=a.dataset.key==='logo'?DEFAULT_LOGO:''; render(); break;
     case 'save-settings': {
       const d=S.settingsDraft, sn=Number(d.startNumber);
@@ -852,17 +864,59 @@ async function onClick(e){
   }
 }
 
+function resizeImage(dataUrl,max=700){
+  return new Promise(res=>{const img=new Image();
+    img.onload=()=>{const sc=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/png'))};
+    img.onerror=()=>res(dataUrl); img.src=dataUrl;});
+}
+async function exportData(){
+  busy(true);
+  try{
+    const [invoices,settings]=await Promise.all([Repo.listInvoices(),Repo.getSettings()]);
+    saveBlob(new Blob([JSON.stringify({exportedAt:new Date().toISOString(),settings,invoices},null,2)],{type:'application/json'}),`fitozon-invoices-backup-${todayISO()}.json`);
+    toast(t('exported'));
+  } finally { busy(false); }
+}
+async function viewLogin(app){
+  app.innerHTML=`<div class="login"><div class="login-card">
+    <img src="${DEFAULT_LOGO}" alt="Fitozon"><h1>${t('loginTitle')}</h1><p class="muted">${t('loginSub')}</p>
+    <label class="field"><span>${t('email')}</span><input id="lEmail" type="email" dir="ltr" autocomplete="username"></label>
+    <label class="field"><span>${t('password')}</span><input id="lPass" type="password" dir="ltr" autocomplete="current-password"></label>
+    <small class="err" id="lErr"></small>
+    <button class="btn yellow lg" id="lBtn">${t('login')}</button>
+  </div></div>`;
+  const go=async()=>{
+    const email=$('#lEmail').value.trim(), password=$('#lPass').value, btn=$('#lBtn');
+    $('#lErr').textContent=''; if(!email||!password){$('#lErr').textContent=t('required');return}
+    btn.disabled=true; btn.textContent=t('loading');
+    const {data,error}=await sb.auth.signInWithPassword({email,password});
+    if(error){ btn.disabled=false; btn.textContent=t('login'); $('#lErr').textContent=/invalid/i.test(error.message)?t('badLogin'):t('netErr'); return; }
+    S.user=data.user; await boot();
+  };
+  $('#lBtn').onclick=go; $('#lPass').onkeydown=e=>{if(e.key==='Enter')go()};
+  setTimeout(()=>$('#lEmail')?.focus(),50);
+}
+async function boot(){
+  const app=$('#app'); renderTopbar();
+  app.innerHTML=`<div class="loading"><div><div class="spinner"></div>${t('loading')}</div></div>`;
+  try{ S.settings=await Repo.getSettings(); navigate('dashboard'); }
+  catch(err){ console.error(err); app.innerHTML=`<div class="empty">${ic('x')}<p>${t('netErr')}</p><button class="btn dark" onclick="boot()">↻</button></div>`; }
+}
 async function init(){
-  await Repo.init();
-  S.settings=await Repo.getSettings();
-  S.lang=(await Repo.adapter.getMeta('lang'))||'ar';
+  S.lang=localGet('lang')||'ar';
+  document.documentElement.dir=S.lang==='ar'?'rtl':'ltr';
   const app=$('#app');
   app.addEventListener('input',onInput); app.addEventListener('click',onClick);
   app.addEventListener('change',onChange); app.addEventListener('keydown',onKey);
   $('#topbar').addEventListener('click',onClick);
   window.addEventListener('resize',fitPreview);
   if(document.fonts) document.fonts.ready.then(fitPreview);
-  render();
+  try{ Repo.init(); }
+  catch(err){ renderTopbar(); app.innerHTML=`<div class="empty">${ic('x')}<p>${t('libErr')}</p></div>`; return; }
+  const {data}=await sb.auth.getSession();
+  S.user=data.session?.user||null;
+  sb.auth.onAuthStateChange((event,session)=>{ if(event==='SIGNED_OUT'&&S.user){S.user=null;navigate('login')} });
+  if(S.user) await boot(); else navigate('login');
 }
 init();
 </script>
